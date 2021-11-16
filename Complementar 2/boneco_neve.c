@@ -1,6 +1,6 @@
 #include<stdlib.h>
 #include<stdio.h>
-#include <GL/glut.h>
+#include<GL/glut.h>
 
 // gcc exemplo_snowman.c -lglut -lGL -lGLU -lm -o exemplo_snowman && ./exemplo_snowman
 

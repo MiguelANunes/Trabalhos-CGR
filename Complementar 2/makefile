@@ -1,18 +1,20 @@
 CC = gcc
-FLAGS = -Wall -lglut -lGL -lGLU -lm
+COMPILEFLAGS = -Wall -lglut -lGL -lGLU -lm
+LINKFLAGS = -lglut -lGL -lGLU -lm
 
 all: link # atualizar depois
 
-run: 
-	./main
-# $(ARGS) 
+run: run_boneco
+
+run_boneco: 
+	./boneco_neve $(ARGS)
 # $(ARGS) serve para capturar argumentos da linha de comando ao compilar pelo makefile
 
-link: compile
-	${CC} -o main boneco_neve.o -lglut -lGL -lGLU -lm
+link: boneco_compile
+	${CC} -o boneco_neve boneco_neve.o ${LINKFLAGS}
 
-compile: 
-	${CC} ${FLAGS} -c boneco_neve.c
+boneco_compile: 
+	${CC} ${COMPILEFLAGS} -c boneco_neve.c
 
 clean:
-	rm *.o main
+	rm *.o main boneco_neve *.out
