@@ -1,0 +1,82 @@
+########################################################################################################################
+Slide "Problemas":
+	O problema principal do trabalho é a privacidade nos serviços de visualização de imagens de ruas - isto é, a presença de carros e pedestres que
+	possam ser usados para identificar pessoas (não necessariamente presentes na imagem) a partir das imagens nestes serviços
+	
+	O Google Street View, serviço utilizado no trabalho, já implementa uma funcionalidade de "borramento" de faces e placas de carro, porém
+	isso não é o suficiente para garantir privacidade.
+	
+	
+########################################################################################################################
+
+Slide "Objetivos":
+	Então, o objetivo geral do trabalho era desenvolver um método eficiente de processamento de imagem que possibilite a remoção de objetos móveis
+	como pessoas e veículos nas imagens de sistemas de visualização de imagens panorâmicas.
+	
+	Para mensurar o desempenho do software desenvolvido, foram estabelecidas as métricas de tempo de execução e qualidade do resultado, baseadas
+	nos trabalhos relacionados ao trabalhos desenvolvido.
+	
+	Os objetivos específicos eram: 
+		Criar um método para a remoção de objetos em movimento, em um sistema de imagens de perspectivas diferentes;
+		
+		Criar um processo para o alinhamento das imagens de diferentes perspectivas;
+		
+		Criar um processo que identifique os pixels referentes ao fundo das imagens, criando uma nova imagem sem oclusão do objetos em movimento;
+		
+		Verificar a funcionalidade do método testando-o em imagens do GSV e comparando-o com os trabalhos relacionados de acordo com as métricas
+		estabelecidas.
+	
+########################################################################################################################
+
+Slide "O que foi feito"
+	Foi feita uma pesquisa da literatura para determinar o estado da arte na área.
+
+	A partir dos trabalhos levantados, foi desenvolvido um algoritmo que identifica objetos que obstruam fachadas de prédios em imagens do Google
+	Street View e as remove, utilizando 3 imagens da mesma fachada, uma vista de frente, uma vista da esquerda e uma vista da direita.
+
+########################################################################################################################
+
+Slide "Recursos/Técnicas Utilizadas"
+
+	O Algoritmo da Distância de Manhatam
+	
+	Um Algoritmo de Identificação de Fundo baseado naquele desenvolvido em Böhm 2004
+	
+	O Método RANSAC (Random Sample Consensus)
+	
+	Um Algoritmo de Transformação de Perspectiva 2D
+	
+	O Algoritmo de Classificação KNN (K Nearest Neighbors)
+	
+	Um Algoritmo de Inpainting
+	
+	E por fim, o Algoritmo SIFT (Scale Invariant Feature Transform) o método de Histogramas de Gradientes Orientados e o algoritmo SURF  
+	(Speeded up Robust Features) que são todos métodos de detecção de descritores
+	
+########################################################################################################################
+Slide "Resultados Obtidos"
+
+	O algoritmo desenvolvido não se comportou da maneira esperada, tendo dificuldades na identificação do fundo das imagens, assim como na
+	identificação de pontos em comum entre as várias perspectivas da mesma fachada, gerando imagens borradas e com artefatos.
+	
+	Aqui um exemplo de uma imagem, antes e depois de ser processada pelo algoritmo desenvolvido
+
+########################################################################################################################
+
+Slide "Conclusão"
+
+	Sistemas como o Google Street View cresceram muito no mundo todo e com eles os problemas de privacidade associados, estes que podem ser
+	resolvidos retirando elementos passíveis de identificação nas imagens do serviço.
+	
+	O método desenvolvido no trabalho eliminou a interferência humana na identificação de objetos passíveis a identificação de pessoas, assim como
+	levou um tempo consideravelmente menor que o tempo empregado pelos trabalhos relacionados, porém os resultados obtidos não tiveram a qualidade
+	esperada.
+	
+	A causa identificada para a baixa qualidade das imagens resultantes foi o método utilizado para a identificação de fundo.
+	
+########################################################################################################################
+
+Slide "Sub-Áreas"
+
+	Foi identificado que o trabalho pertence à área de Processamento de Imagens, pois lida com a manipulação de imagens e geração de novas imagens
+	a partir de outras, mas não as gera a partir de dados os modelos computacionais.
