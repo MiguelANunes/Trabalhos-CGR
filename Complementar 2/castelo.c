@@ -114,7 +114,12 @@ void RenderScene(void){
     glPopMatrix();
 
         // Telhado da torre
-	
+        glPushMatrix();
+            glTranslatef(-1.0f, 0.5f, -0.5f);
+            glRotatef(-90,1,0,0);             // rotaciona
+            glTranslatef(0.0f, 0.0f, 0.0f); // para que esteja orientado no eixo y
+            gluCylinder(ObjetoPrincipal, 0.125f, 0.0f, 0.2f, 30, 15);
+        glPopMatrix();
 
 // gluCylinder(pObj, 0.04f, 0.0f, 0.3f, 26, 13); // cria um cilindro com 0.04 raio de base
 //  0 raio de topo (portanto gera um cone) 0.3 altura 26 linhas de longitude e 13 de latitude 
