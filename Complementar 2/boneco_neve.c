@@ -256,7 +256,7 @@ void RenderScene(void){
         glTranslatef(0.0f, 0.0f, -0.45f); // para que ele esteja orientado no eixo y
         gluCylinder(pObj, 0.25f, 0.25f, 0.5f, 26,13); // cria um cilindro de raio .25 e altura .5
     glPopMatrix();
-         
+
     // Restore the matrix state  
     glPopMatrix();  
     // Buffer swap  
