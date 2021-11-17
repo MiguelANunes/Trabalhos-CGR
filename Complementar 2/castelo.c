@@ -107,23 +107,31 @@ void RenderScene(void){
 
     // Torre esquerda, fundo
     glPushMatrix();
-        glTranslatef(-1.5f, 0.5f, -0.5f);
+        glTranslatef(-1.5f, 0.57f, -0.5f);
         glRotatef(90,1,0,0);             // rotaciona
         glTranslatef(0.0f, 0.0f, 0.0f); // para que esteja orientado no eixo y
-        gluCylinder(ObjetoPrincipal, 0.125f, 0.125f, 0.35f, 30, 15);
+        gluCylinder(ObjetoPrincipal, 0.125f, 0.125f, 0.45f, 30, 15);
     glPopMatrix();
 
         // Telhado da torre
         glPushMatrix();
-            glTranslatef(-1.5f, 0.5f, -0.5f);
+            glTranslatef(-1.5f, 0.57f, -0.5f);
             glRotatef(-90,1,0,0);             // rotaciona
             glTranslatef(0.0f, 0.0f, 0.0f); // para que esteja orientado no eixo y
             gluCylinder(ObjetoPrincipal, 0.155f, 0.0f, 0.2f, 30, 15);
         glPopMatrix();
 
+    // Parede entre torre esquerda e torre centro-esquerda
+    glPushMatrix();
+        glTranslatef(-1.5f, 0.5f, -0.5f); 
+        glRotatef(-180,1,0,-0.30f);
+        glTranslatef(0.10f,0.22f,-0.75f); // -0.5 pois agora essa retângulo está de cabeiça p/ baixo
+        gluCylinder(ObjetoPrincipal, 0.175f, 0.175f, 0.8f, 2, 1);
+    glPopMatrix();
+
     // Torre centro-esquerda
     glPushMatrix();
-        glTranslatef(-0.9f, 0.65f, 0.0f);
+        glTranslatef(-0.9f, 0.625f, 0.0f);
         glRotatef(90,1,0,0);             // rotaciona
         glTranslatef(0.0f, 0.0f, 0.0f); // para que esteja orientado no eixo y
         gluCylinder(ObjetoPrincipal, 0.15f, 0.15f, 0.5f, 30, 15);
@@ -131,15 +139,66 @@ void RenderScene(void){
 
         // Telhado da Torre
         glPushMatrix();
-            glTranslatef(-0.9f, 0.65f, 0.0f);
+            glTranslatef(-0.9f, 0.625f, 0.0f);
             glRotatef(-90,1,0,0);             // rotaciona
             glTranslatef(0.0f, 0.0f, 0.0f); // para que esteja orientado no eixo y
             gluCylinder(ObjetoPrincipal, 0.18f, 0.0f, 0.35f, 30, 15);
         glPopMatrix();
 
+    // Parede entre torre centro-esquerda e gate house
+    glPushMatrix();
+        glTranslatef(0.325f, 0.125f, 0.0f); 
+        glRotatef(180,1,0,0);
+        glTranslatef(0,-0.35f,0); // negativo pois agora essa retângulo está de cabeiça p/ baixo
+        glRectf(-1.1f, 0.35f, -0.4f, 0.0f);
+    glPopMatrix();
+
+    // Torre atrás da gate-house
+    glPushMatrix();
+        glTranslatef(-1.3f, 1.0f, -0.25f);
+        glRotatef(90,1,0,0);
+        glTranslatef(1.0f, 0.0f, 0.0f);
+        gluCylinder(ObjetoPrincipal, 0.15f, 0.15f, 0.75f, 4, 2);
+    glPopMatrix();
+
+        // Telhado da Torre atrás da gate-house
+        glPushMatrix();
+            glTranslatef(-1.3f, 1.0f, -0.25f);
+            glRotatef(90,1,0,1);
+            glTranslatef(0.3f, -1.3f, 0.1f);
+            glTranslatef(-0.1f, 1.0f, 0.7f);
+            // glRotatef(90,0,0,1);
+            // glTranslatef(0.0f, 1.0f, 0.0f);
+            gluSphere(ObjetoPrincipal, 0.15f, 4, 2);
+        glPopMatrix();
+
+    // Gate-house
+    glPushMatrix();
+        glTranslatef(-1.0f, 0.625f, 0.0f);
+        glRotatef(90,1,0,0);
+        glTranslatef(1.0f, 0.0f, 0.0f);
+        gluCylinder(ObjetoPrincipal, 0.2f, 0.2f, 0.5f, 4, 2);
+    glPopMatrix();
+
+        // Telhado da Gate-House
+        glPushMatrix();
+            glTranslatef(-1.0f, 0.625f, 0.0f);
+            glRotatef(-90,1,0,0);
+            glTranslatef(1.0f, 0.0f, 0.0f);
+            gluCylinder(ObjetoPrincipal, 0.2f, 0.0f, 0.25f, 4, 2);
+        glPopMatrix();
+
+    // Parede entre gate house e torre da direita
+    glPushMatrix();
+        glTranslatef(0.0f, 0.125f, 0.0f); 
+        glRotatef(180,1,0,0);
+        glTranslatef(0,-0.35f,0); // negativo pois agora essa retângulo está de cabeiça p/ baixo
+        glRectf(0.2f, 0.35f, 1.0f, 0.0f);
+    glPopMatrix();
+
     // Torre da Direita
     glPushMatrix();
-        glTranslatef(1.1f, 0.65f, 0.0f);
+        glTranslatef(1.1f, 0.625f, 0.0f);
         glRotatef(90,1,0,0);             // rotaciona
         glTranslatef(0.0f, 0.0f, 0.0f); // para que esteja orientado no eixo y
         gluCylinder(ObjetoPrincipal, 0.15f, 0.15f, 0.5f, 30, 15);
@@ -147,13 +206,14 @@ void RenderScene(void){
 
     // Telhado da Torre
         glPushMatrix();
-            glTranslatef(1.1f, 0.65f, 0.0f);
+            glTranslatef(1.1f, 0.625f, 0.0f);
             glRotatef(-90,1,0,0);             // rotaciona
             glTranslatef(0.0f, 0.0f, 0.0f); // para que esteja orientado no eixo y
             gluCylinder(ObjetoPrincipal, 0.18f, 0.0f, 0.35f, 30, 15);
         glPopMatrix();
 
 // gluCylinder(pObj, RaioBase, RaioTopo, Altura, Lat, Long);
+// glRect(x1, y1, x2, y2)
          
     // Restore the matrix state  
     glPopMatrix();  
