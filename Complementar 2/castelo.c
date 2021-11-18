@@ -165,11 +165,11 @@ void RenderScene(void){
         glPushMatrix();
             glTranslatef(-1.3f, 1.0f, -0.25f);
             glRotatef(90,1,0,1);
-            glTranslatef(0.3f, -1.3f, 0.1f);
-            glTranslatef(-0.1f, 1.0f, 0.7f);
-            // glRotatef(90,0,0,1);
-            // glTranslatef(0.0f, 1.0f, 0.0f);
-            gluSphere(ObjetoPrincipal, 0.15f, 4, 2);
+            glTranslatef(0.48f,-0.72f,0.48f);
+            glutSolidCube(0.17f);
+            // glRotatef(90,1,0,1);
+            // glTranslatef(0.5f, -0.7f, 0.5f);
+            // gluSphere(ObjetoPrincipal, 0.16f, 4, 2);
         glPopMatrix();
 
     // Gate-house
