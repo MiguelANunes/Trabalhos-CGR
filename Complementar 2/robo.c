@@ -3,7 +3,9 @@
 #include <math.h>
 
 int rotacaoBraco = 0;
+int rotacaoCotovelo = 0;
 int rotacaoPerna = 0;
+int rotacaoJoelho = 0;
 
 static GLfloat ROTACAO_X = 0.0f;
 static GLfloat ROTACAO_Y = 0.0f;
@@ -37,14 +39,19 @@ void ChangeSize(int comprimento, int altura){
 
 
 void giraBraco(void){
+    glRotatef((GLfloat) rotacaoBraco, 1, 0, 0); 
+}
 
-    glRotatef(-(GLfloat) rotacaoBraco, 0.48, 0, 0); 
-    // usando o valor do ponto onde eu quero rotacionar, ao invés de variáveis
-    // para facilitar a visualização doq está acontecendo
+void giraCotovelo(void){
+    glRotatef((GLfloat) rotacaoCotovelo, 1, 0, 0); 
 }
 
 void giraPerna(void){
-    glRotatef((GLfloat) rotacaoPerna, .0001,0,0); 
+    glRotatef((GLfloat) rotacaoPerna, 1,0,0); 
+}
+
+void giraJoelho(void){
+    glRotatef((GLfloat) rotacaoJoelho, 1,0,0); 
 }
 
 void SetupRC(){  
@@ -201,37 +208,32 @@ void DesenhaBracoEsquerdo(void){
     glPopMatrix();
 
     glPushMatrix();
-        giraBraco();
         glTranslatef(-tamanhoCorpoX+.18,tamanhoCorpoY-.25,-0.55);
+        giraBraco();
         glRotatef(45, 0, 0, 1);
         glRotatef(-45, -1, 1, 0);
-        // rotação de movimento do ombro
         gluCylinder(Braco, raioBraco, raioBraco, comprimentoBraco, 4, 2);
+
+        glPushMatrix();
+            glTranslatef(-tamanhoCorpoX+.75,tamanhoCorpoY-1.5,.53);
+            gluSphere(Cotovelo, tamanhoCotovelo, 30, 15);
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(-tamanhoCorpoX+.75,tamanhoCorpoY-1.5,.53);
+            glRotatef(-45, 0, 0, 1);
+            giraCotovelo();
+            glRotatef(-45, 0, 0, 1);
+            gluCylinder(AnteBraco, raioAnteBraco, raioAnteBraco, comprimentoAnteBraco, 4, 2);
+            
+            glPushMatrix();
+                glTranslatef(-tamanhoCorpoX+.75,tamanhoCorpoY-1.5,.43);
+                gluSphere(Mao, raioAnteBraco, 30, 15);
+            glPopMatrix();
+        glPopMatrix();
+
     glPopMatrix();
 
-    glPushMatrix();
-        giraBraco();
-        // aqui tbm rotação de movimento do ombro
-        // rotação de movimento do cotovelo
-        glTranslatef(-tamanhoCorpoX+.17, 1.35*(comprimentoBraco), .15*(-comprimentoBraco));
-        gluSphere(Cotovelo, tamanhoCotovelo, 30, 15);
-    glPopMatrix();
-
-    glPushMatrix();
-        giraBraco();
-        glTranslatef(-tamanhoCorpoX+.17, 1.3*(comprimentoBraco), .1*(-comprimentoBraco));
-        glRotatef(45, 0, 0, 1);
-        glRotatef(-45, -1, 1, 0);
-        gluCylinder(AnteBraco, raioAnteBraco, raioAnteBraco, comprimentoAnteBraco, 4, 2);
-    glPopMatrix();
-
-    glPushMatrix();
-        giraBraco();
-        // aqui tbm rotação de movimento do ombro
-        // rotação de movimento do cotovelo
-        glTranslatef(-tamanhoCorpoX+.17, .8*(comprimentoBraco), .4*(comprimentoBraco));
-        gluSphere(Mao, raioAnteBraco, 30, 15);
-    glPopMatrix();
 
     glutSwapBuffers();
 }
@@ -264,37 +266,33 @@ void DesenhaBracoDireito(void){
     glPopMatrix();
 
     glPushMatrix();
+        glTranslatef(tamanhoCorpoX-.44,tamanhoCorpoY-.25,-0.55);
         giraBraco();
-        glTranslatef(tamanhoCorpoX-.43,tamanhoCorpoY-.25,-0.55);
         glRotatef(45, 0, 0, 1);
         glRotatef(-45, -1, 1, 0);
-        // rotação de movimento do ombro
         gluCylinder(Braco, raioBraco, raioBraco, comprimentoBraco, 4, 2);
+
+        glPushMatrix();
+            glTranslatef(tamanhoCorpoX-.75,tamanhoCorpoY-1.5,0.53);
+            gluSphere(Cotovelo, tamanhoCotovelo, 30, 15);
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(tamanhoCorpoX-.75,tamanhoCorpoY-1.5,0.53);
+            glRotatef(-45, 0, 0, 1);
+            giraCotovelo();
+            glRotatef(-45, 0, 0, 1);
+            gluCylinder(AnteBraco, raioAnteBraco, raioAnteBraco, comprimentoAnteBraco, 4, 2);
+
+            glPushMatrix();
+                glTranslatef(tamanhoCorpoX-.75,tamanhoCorpoY-1.5,0.43);
+                gluSphere(Mao, raioAnteBraco, 30, 15);
+            glPopMatrix();
+
+        glPopMatrix();
+
     glPopMatrix();
 
-    glPushMatrix();
-        giraBraco();
-        // aqui tbm rotação de movimento do ombro
-        // rotação de movimento do cotovelo
-        glTranslatef(tamanhoCorpoX-.43, 1.35*(comprimentoBraco), .15*(-comprimentoBraco));
-        gluSphere(Cotovelo, tamanhoCotovelo, 30, 15);
-    glPopMatrix();
-
-    glPushMatrix();
-        giraBraco();
-        glTranslatef(tamanhoCorpoX-.43, 1.3*(comprimentoBraco), .1*(-comprimentoBraco));
-        glRotatef(45, 0, 0, 1);
-        glRotatef(-45, -1, 1, 0);
-        gluCylinder(AnteBraco, raioAnteBraco, raioAnteBraco, comprimentoAnteBraco, 4, 2);
-    glPopMatrix();
-
-    glPushMatrix();
-        giraBraco();
-        // aqui tbm rotação de movimento do ombro
-        // rotação de movimento do cotovelo
-        glTranslatef(tamanhoCorpoX-.43, .8*(comprimentoBraco), .4*(comprimentoBraco));
-        gluSphere(Mao, raioAnteBraco, 30, 15);
-    glPopMatrix();
 
     glutSwapBuffers();
 }
@@ -324,7 +322,6 @@ void DesenhaPernaEsquerda(void){
     comprimentoPerna = (2*comprimentoCoxa)/3;
 
     glPushMatrix();
-        // giraPerna();
         glTranslatef(-tamanhoCorpoX+.40,altura,-0.4);
         gluSphere(Quadril, tamanhoQuadril, 30, 15);
     glPopMatrix();
@@ -332,38 +329,36 @@ void DesenhaPernaEsquerda(void){
     altura -= tamanhoQuadril/2;
     
     glPushMatrix();
-        giraPerna();
         glTranslatef(-tamanhoCorpoX+.40,altura,-0.4);
+        giraPerna();
         glRotatef(90, 1, 0, 0);
         glRotatef(45, 0, 0, 1);
         gluCylinder(Coxa, raioCoxa, raioCoxa, comprimentoCoxa, 4, 2);
+
+        glPushMatrix();
+            glTranslatef(-tamanhoCorpoX+.76,altura+.08,0.39);
+            gluSphere(Joelho, tamanhoJoelho, 30, 15);
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(-tamanhoCorpoX+.76,altura+.08,0.39);
+            glRotatef(-45, 0, 0, 1);
+            giraJoelho();
+            glRotatef(-45, 0, 0, 1);
+            gluCylinder(Perna, raioPerna, raioPerna, comprimentoPerna, 4, 2);
+
+            glPushMatrix();
+                glTranslatef(-tamanhoCorpoX+.75,altura+.07,0.30);
+                gluSphere(Pe, raioPerna, 30, 15);
+            glPopMatrix();
+
+        glPopMatrix();
+
     glPopMatrix();
 
-    altura -= comprimentoCoxa;
 
-    glPushMatrix();
-        giraPerna();
-        glTranslatef(-tamanhoCorpoX+.40,altura,-0.4);
-        gluSphere(Joelho, tamanhoJoelho, 30, 15);
-    glPopMatrix();
+    // altura -= comprimentoPerna;
 
-    altura -= tamanhoJoelho/2;
-
-    glPushMatrix();
-        giraPerna();
-        glTranslatef(-tamanhoCorpoX+.40,altura,-0.4);
-        glRotatef(90, 1, 0, 0);
-        glRotatef(45, 0, 0, 1);
-        gluCylinder(Perna, raioPerna, raioPerna, comprimentoPerna, 4, 2);
-    glPopMatrix();
-
-    altura -= comprimentoPerna;
-
-    glPushMatrix();
-        giraPerna();
-        glTranslatef(-tamanhoCorpoX+.40,altura,-0.4);
-        gluSphere(Pe, raioPerna, 30, 15);
-    glPopMatrix();
 
     glutSwapBuffers();
 }
@@ -400,38 +395,40 @@ void DesenhaPernaDireita(void){
     altura -= tamanhoQuadril/2;
 
     glPushMatrix();
-        giraPerna();
         glTranslatef(tamanhoCorpoX-.65,altura,-0.4);
+        giraPerna();
         glRotatef(90, 1, 0, 0);
         glRotatef(45, 0, 0, 1);
         gluCylinder(Coxa, raioCoxa, raioCoxa, comprimentoCoxa, 4, 2);
+        
+        glPushMatrix();
+            glTranslatef(-tamanhoCorpoX+.76,altura+.08,.39);
+            gluSphere(Joelho, tamanhoJoelho, 30, 15);
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(-tamanhoCorpoX+.76,altura+.08,.39);
+            glRotatef(-45, 0, 0, 1);
+            giraJoelho();
+            glRotatef(-45, 0, 0, 1);
+            gluCylinder(Perna, raioPerna, raioPerna, comprimentoPerna, 4, 2);
+
+            glPushMatrix();
+                glTranslatef(-tamanhoCorpoX+.75,altura+.07,.30);
+                gluSphere(Pe, raioPerna, 30, 15);
+            glPopMatrix();
+
+        glPopMatrix();
+
     glPopMatrix();
 
-    altura -= comprimentoCoxa;
+    // 
 
-    glPushMatrix();
-        giraPerna();
-        glTranslatef(tamanhoCorpoX-.65,altura,-0.4);
-        gluSphere(Joelho, tamanhoJoelho, 30, 15);
-    glPopMatrix();
+    // altura -= tamanhoJoelho/2;
 
-    altura -= tamanhoJoelho/2;
 
-    glPushMatrix();
-        giraPerna();
-        glTranslatef(tamanhoCorpoX-.65,altura,-0.4);
-        glRotatef(90, 1, 0, 0);
-        glRotatef(45, 0, 0, 1);
-        gluCylinder(Perna, raioPerna, raioPerna, comprimentoPerna, 4, 2);
-    glPopMatrix();
+    // altura -= comprimentoPerna;
 
-    altura -= comprimentoPerna;
-
-    glPushMatrix();
-        giraPerna();
-        glTranslatef(tamanhoCorpoX-.65,altura,-0.4);
-        gluSphere(Pe, raioPerna, 30, 15);
-    glPopMatrix();
 
     glutSwapBuffers();
 }
@@ -532,12 +529,34 @@ void keyboard (unsigned char key, int x, int y){
 
         case 'e':
         case 'E':
-            rotacaoPerna = (rotacaoPerna + 5) % 360;
+            rotacaoCotovelo = (rotacaoCotovelo + 5) % 360;
             glutPostRedisplay();
             break;
         case 'd':
         case 'D':
+            rotacaoCotovelo = (rotacaoCotovelo - 5) % 360;
+            glutPostRedisplay();
+            break;
+
+        case 'r':
+        case 'R':
+            rotacaoPerna = (rotacaoPerna + 5) % 360;
+            glutPostRedisplay();
+            break;
+        case 'f':
+        case 'F':
             rotacaoPerna = (rotacaoPerna - 5) % 360;
+            glutPostRedisplay();
+            break;
+
+        case 't':
+        case 'T':
+            rotacaoJoelho = (rotacaoJoelho + 5) % 360;
+            glutPostRedisplay();
+            break;
+        case 'g':
+        case 'G':
+            rotacaoJoelho = (rotacaoJoelho - 5) % 360;
             glutPostRedisplay();
             break;
 
