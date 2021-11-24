@@ -11,7 +11,7 @@
 #define GRAVITY 0.0003
 
 struct s_pf {// colocar um campo de cor
-    float x, y, veloc_x, veloc_y;
+    float x, y, velocidadeX, velocidadeY;
     unsigned lifetime;
 } particles[NUM_PARTICLES];
 
@@ -30,8 +30,8 @@ void InitAllParticles(int pause){
             continue;
         float velocity = 0.0001;
         int angle = rand() % 360;
-        particles[i].veloc_x = cos((M_PI * angle/180.0)) * velocity;
-        particles[i].veloc_y = fabs(sin((M_PI * angle/180.0)) * velocity);
+        particles[i].velocidadeX = cos((M_PI * angle/180.0)) * velocity;
+        particles[i].velocidadeY = fabs(sin((M_PI * angle/180.0)) * velocity);
         particles[i].x = 0;
         particles[i].y = 2.25;
         particles[i].lifetime = 50;
@@ -42,8 +42,8 @@ void InitAllParticles(int pause){
 void InitParticle(int index){
     float velocity = 0.0001;
     int angle = rand() % 360;
-    particles[index].veloc_x = cos((M_PI * angle/180.0)) * velocity;
-    particles[index].veloc_y = fabs(sin((M_PI * angle/180.0)) * velocity);
+    particles[index].velocidadeX = cos((M_PI * angle/180.0)) * velocity;
+    particles[index].velocidadeY = fabs(sin((M_PI * angle/180.0)) * velocity);
     particles[index].x = 0;
     particles[index].y = 2.25;
     particles[index].lifetime = 50;
@@ -53,7 +53,7 @@ void InitParticle(int index){
 // Desenhando a cena
 void DrawGLScene(){
 
-    int i, active_particles=0, RandDirecao, RandMovimentoX, DeslocamentoX, r;
+    int i, active_particles=0, RandDirecao, RandMovimentoX, r;
     double Delta;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		// Clear The Screen And The Depth Buffer
     glLoadIdentity();				// Reset The View
@@ -69,7 +69,7 @@ void DrawGLScene(){
         r = rand() % 15;
         r = r%2 == 0 ? r : -r;
         particles[i].x += r * (0.1);
-        particles[i].veloc_x += r * (0.1);
+        particles[i].velocidadeX += r * (0.1);
     }
 
     for(i=0;i<curretParticles;i++){
@@ -81,7 +81,7 @@ void DrawGLScene(){
             active_particles++;
             
             particles[i].x += RandMovimentoX * RandDirecao * (Delta/100.0);
-            particles[i].y -= (particles[i].veloc_y + GRAVITY + (Delta/100.0));
+            particles[i].y -= (particles[i].velocidadeY + GRAVITY + (Delta/100.0));
             particles[i].lifetime--;
 
             glVertex3f(particles[i].x, particles[i].y, 0.0f);
