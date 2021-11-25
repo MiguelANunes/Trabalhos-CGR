@@ -1,7 +1,6 @@
-// gcc fireworks_glut.c -lglut -lGL -lGLU -lm -o fireworks_glut
-#include <GL/glut.h>  // Header File For The GLUT Library 
-#include <GL/gl.h>	  // Header File For The OpenGL32 Library
-#include <GL/glu.h>	  // Header File For The GLu32 Library
+#include <GL/glut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <math.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -55,15 +54,15 @@ void DrawGLScene(){
 
     int i, active_particles=0, RandDirecao, RandMovimentoX, r;
     double Delta;
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);		// Clear The Screen And The Depth Buffer
-    glLoadIdentity();				// Reset The View
-    glTranslatef(0.0f,0.0f,-6.0f); // Cria as particulas 3 unidades acima da origem, 6 atrás dela
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+    glTranslatef(0.0f,0.0f,-6.0f);
 
     glColor3f(1,1,1);
 
-    glBegin(GL_POINTS);
-    for(i=0;i<curretParticles;i++){
-        r = rand() % 5;
+    glBegin(GL_POINTS); 
+    for(i=0;i<curretParticles;i++){ // Inicializando as particulas no topo da tela
+        r = rand() % 5;// com variações aleatórias de posição das mesmas
         r = r%2 == 0 ? r : -r;
         particles[i].y += r * (0.075);
         r = rand() % 15;

@@ -5,5 +5,8 @@ LINKFLAGS = -lglut -lGL -lGLU -lm
 
 neve: ${LINKFLAGS}
 
+run: neve
+	./neve
+
 clean:
 	rm *.o neve
