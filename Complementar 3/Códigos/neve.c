@@ -9,7 +9,7 @@
 #define NUM_PARTICLES 10000
 #define GRAVITY 0.0003
 
-struct s_pf {// colocar um campo de cor
+struct s_pf {
     float x, y, velocidadeX, velocidadeY;
     unsigned lifetime;
 } particles[NUM_PARTICLES];
@@ -25,8 +25,7 @@ void InitAllParticles(int pause){
     if(pause) usleep(20000 + rand() % 200000);
 
     for(i=0;i<NUM_PARTICLES;i++) {
-        if(particles[i].lifetime > 0)
-            continue;
+
         float velocity = 0.0001;
         int angle = rand() % 360;
         particles[i].velocidadeX = cos((M_PI * angle/180.0)) * velocity;
@@ -62,13 +61,13 @@ void DrawGLScene(){
 
     glBegin(GL_POINTS); 
     for(i=0;i<curretParticles;i++){ // Inicializando as particulas no topo da tela
-        r = rand() % 5;// com variações aleatórias de posição das mesmas
+        r = rand() % 50;// com variações aleatórias de posição das mesmas
         r = r%2 == 0 ? r : -r;
-        particles[i].y += r * (0.075);
-        r = rand() % 15;
+        particles[i].y += r * (0.01);
+        r = rand() % 150;
         r = r%2 == 0 ? r : -r;
-        particles[i].x += r * (0.1);
-        particles[i].velocidadeX += r * (0.1);
+        particles[i].x += r * (0.02);
+        particles[i].velocidadeX += r * (0.01);
     }
 
     for(i=0;i<curretParticles;i++){
@@ -138,10 +137,14 @@ void ReSizeGLScene(int Width, int Height){
 /* The function called whenever a key is pressed. */
 void keyPressed(unsigned char key, int x, int y){
     usleep(100);
-    if (key == ESCAPE){ 
+    if(key == ESCAPE){
+        printf("Fechando...\n");
         glutDestroyWindow(window); 
-
         exit(0);                   
+    }
+    if(key == 32){ // Barra de Espaço
+        printf("Reiniciando...\n");
+        InitAllParticles(0);
     }
 }
 
