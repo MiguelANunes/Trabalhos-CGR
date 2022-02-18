@@ -3,10 +3,10 @@ COMPILEFLAGS = -Wall -c
 LINKFLAGS = -lglut -lGL -lGLU -lm
 .PHONY: clean
 
-boids: ${LINKFLAGS}
+robo: ${LINKFLAGS}
 
-run: boids
-	./boids
+run: robo
+	./robo
 
 clean:
-	rm *.o boids
+	rm *.o robo
