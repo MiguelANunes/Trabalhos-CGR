@@ -15,19 +15,19 @@ def refresh2d():
     glMatrixMode (GL_MODELVIEW)
     glLoadIdentity()
 
-def draw_circle(cx, cy):
-    glBegin(GL_LINE_LOOP)
+def draw_circle(tx, ty, cx, cy, tipoGL):
+    glBegin(tipoGL)
 
-    raio = 5
+    raio = 10
     segmentos = 30
 
     for i in range(segmentos):
         angulo = (2*numpy.pi*i)/segmentos
-        
-        x = raio*math.cos(angulo)
-        y = raio*math.sin(angulo)
+        x = tx*raio*math.cos(angulo)
+        y = ty*raio*math.sin(angulo)
 
-        glVertex2f(x+cx, y+cy)
+        glVertex2f(cx+x+tx, cy+y+ty)
+        
 
     glEnd() 
 
@@ -36,8 +36,9 @@ def draw():
     glLoadIdentity()
     refresh2d()
     glColor3f(0.0, 0.0, 1.0)
+    draw_circle( 5, 5, 100, 100, GL_POLYGON) #( tamanho x, tamanho y, coordenada x, coordenada y, tipo do objeto a ser desenhado)
 
-    draw_circle(0.5,0.5)
+    
 
     glutSwapBuffers()
 
