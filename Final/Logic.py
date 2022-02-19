@@ -1,3 +1,6 @@
+import Entities
+from random import randint
+
 entity_list = {} # mantendo uma lista de todas as entidades atualmente existentes
 projectile_list = {}
 terrain_list = {}
@@ -58,3 +61,8 @@ def createExplosion(position, radius, damage):
         E E E E E
     """
     pass
+
+def generateRandomTerrain(pos_x, pos_y): # gera um objeto de terreno que é colocado no cenário
+    x = randint(1,3)
+    obj = Entities.Terrain(pos_x, pos_y, (x, x))
+    terrain_list[obj.id] = obj
