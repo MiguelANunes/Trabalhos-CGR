@@ -3,10 +3,11 @@ import Logic
 
 """
 TODO:   
+    Estados de entidades
     Calcular explosões
     Metodo para entidades atirarem
-    Método para checar se TTL de um projétil = 0 e processar
-    Inserir objeto de terreno não bloqueante onde um ArtilleryRound explode
+    Metodo para entidades moverem
+    Metodo para entidades recarregarem
 
 IDs:
     IDs de entidades começam com 1 seguido por mais um digito que define o tipo de entidade e então 
@@ -56,7 +57,6 @@ class Entity(object):
     def __init__(self, pos_x, pos_y):
         self.id = str(randint(100, 999))
         self.position = (pos_x, pos_y)
-        Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
     def takeDamage(self, damage):
         if damage >= self.armor: # trivialmente verdadeiro no caso do soldado
@@ -78,6 +78,18 @@ class Entity(object):
 
         del self # objeto só é removido inteiramente da memória se não há mais referencias a ele
 
+    def fire(self, isTankFiring = False, projType = None): # metodo para uma entidade disparar um ataque
+        self.action_points -= 1
+        self.ammo_amount -= 1
+
+        if isTankFiring: # como um tanque tem dois tipos de municao, tem um tratamento especial
+            pass
+        else:
+            if self.ammo_type == 2: # se não é um tanque, ou é um soldado
+                P = RifleRound(self.position[0],self.position[1], self.id)
+            else: # ou artilharia
+                pass
+
 class Soldier(Entity):
 
     def __init__(self, pos_x, pos_y):
@@ -96,6 +108,7 @@ class Rifleman(Soldier):
         self.ammo_amount = 8
         self.action_points = 3
         self.attack_range = 50
+        Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
 class MachineGunner(Soldier):
 
@@ -105,6 +118,7 @@ class MachineGunner(Soldier):
         self.ammo_amount = 200
         self.action_points = 2
         self.attack_range = 100
+        Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
 class Tank(Entity):
 
@@ -124,6 +138,7 @@ class MediumTank(Tank):
         self.action_points = 2
         self.attack_range = 150
         self.size = (3,7)
+        Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
 class ArtilleryTank(Tank):
 
@@ -136,6 +151,7 @@ class ArtilleryTank(Tank):
         self.action_points = 1
         self.attack_range = 300
         self.size = (2,5)
+        Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
 class Projectile(object):
     id = ""
@@ -151,24 +167,43 @@ class Projectile(object):
         self.id = str(randint(1000, 9999))
         self.position = (pos_x, pos_y)
         self.parent_id = parent_id
-        Logic.projectile_list[self.id] = self
 
     def checkCollision(self, target):
         # uma bala é destruida sempre que atinge alguma coisa
         if target.id != self.parent_id: # projetil não colide com a entidade que gerou ele
             if self.position == target.position: # posição sempre é uma tupla (x,y)
 
-                if isinstance(self, (TankHERound, ArtilleryRound)):
+                if self.id.startswith("32") or self.id.startswith("4"):
                     del Logic.projectile_list[self.id]
                     Logic.createExplosion(self.position, self.radius, self.damage)
 
-                elif isinstance(target, Terrain): 
-                    del Logic.projectile_list[self.id]
-                    return # se uma bala normal atinge algo do terreno, nada acontece
+                    if self.id.startswith("4") and randint(1,100) <= 10: # se é artilharia, pode criar um buraco
+                        T = Terrain(self.position[0], self.position[1], (1,1))
+                        T.setNonBlocker()
+                        Logic.terrain_list[T.id] = T
+                    del self
 
-                else: # se o alvo não é um terreno então é uma entidade - não vou lidar com colisão entre projéteis
+                elif target.id.statswith("9"): 
+                    del Logic.projectile_list[self.id]
+                    del self # se uma bala normal atinge algo do terreno, nada acontece
+
+                else: # se o alvo não é um terreno então é uma entidade - não vamos lidar com colisão entre projéteis
                     del Logic.projectile_list[self.id]
                     target.takeDamage(self.damage)
+                    del self
+
+    def zeroTTL(self): # se TTL = 0, projétil é deletado
+        del Logic.projectile_list[self.id] 
+
+        if self.id.startswith("32") or self.id.startswith("4"): # se é explosivo, explode
+            Logic.createExplosion(self.position, self.radius, self.damage)
+
+            if self.id.startswith("4") and randint(1,100) <= 10: # se é artilharia, pode criar um buraco
+                T = Terrain(self.position[0], self.position[1], (1,1))
+                T.setNonBlocker()
+                Logic.terrain_list[T.id] = T
+        
+        del self
 
 class RifleRound(Projectile):
     
@@ -181,6 +216,7 @@ class RifleRound(Projectile):
         x = randint(0,1)
         x = 1 if x == 0 else -1
         self.dispersion = (25, x)
+        Logic.projectile_list[self.id] = self
 
 class TankAPRound(Projectile):
 
@@ -193,6 +229,7 @@ class TankAPRound(Projectile):
         x = randint(0,1)
         x = 1 if x == 0 else -1
         self.dispersion = (10, x)
+        Logic.projectile_list[self.id] = self
 
 class TankHERound(Projectile):
 
@@ -206,6 +243,7 @@ class TankHERound(Projectile):
         x = randint(0,1)
         x = 1 if x == 0 else -1
         self.dispersion = (20, x)
+        Logic.projectile_list[self.id] = self
 
 class ArtilleryRound(Projectile):
 
@@ -214,11 +252,12 @@ class ArtilleryRound(Projectile):
         self.id = "4"+self.id
         self.damage = 500
         self.armor_penetration = 5 + randint(-5,15)
-        self.ttl = 500 + randint(50, 100)
+        self.ttl = 500 + randint(-200, 0)
         self.radius = 5
         x = randint(0,1)
         x = 1 if x == 0 else -1
         self.dispersion = (35, x)
+        Logic.projectile_list[self.id] = self
 
 class Terrain(object):
     id = ""
@@ -233,10 +272,9 @@ class Terrain(object):
         self.blocks_path = True
         Logic.terrain_list[self.id] = self
 
-    def initNonBlocker(self, pos_x, pos_y, size):
-        self.id = "92" + str(randint(100, 999))
-        self.position = (pos_x, pos_y)
-        self.size = size # tamnho em x e y do objeto
+    def setNonBlocker(self):
+        del Logic.terrain_list[self.id]
+        self.id = "92" + self.id[2:]
         self.blocks_path = False
         Logic.terrain_list[self.id] = self
 
