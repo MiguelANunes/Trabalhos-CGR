@@ -1,13 +1,15 @@
 from random import randint
+from collections import deque
 import Logic
 
 """
 TODO:   
     Estados de entidades
     Calcular explosões
-    Metodo para entidades atirarem
-    Metodo para entidades moverem
-    Metodo para entidades recarregarem
+    Arrumar método fire para lidar com os MachineGunners
+    Arrumar método fira - balas são criadas e ficam na lista, ao invés de serem criadas indo pra algum lugar
+    Metodo para projéteis moverem
+    Metodo para entidades recarregarem (Lógica)
 
 IDs:
     IDs de entidades começam com 1 seguido por mais um digito que define o tipo de entidade e então 
@@ -41,6 +43,60 @@ IDs:
             pequena chance de um objeto deste tipo ser inserido na posição onde estava esse projétil
 """
 
+def rebuildPath(path, orig, dest):
+    end = path[dest[0]][dest[1]]
+    i, j = end
+    final_path = [end]
+
+    while path[i][j] != orig:
+        final_path.append(path[i][j])
+        i, j = path[i][j]
+    final_path.reverse()
+    return final_path
+
+def findPathOnGameMap(orig, dest, map_size): # BFS para achar um caminho entre dois pontos
+    game_map = Logic.game_map
+
+    orig_x, orig_y = orig
+    dest_x, dest_y = dest
+    x, y = 0, 0
+
+    visitados = [[False for i in range(map_size)] for i in range(map_size)]
+    visitados[orig_x][orig_y] = True
+    traverse_queue = deque()
+    traverse_queue.append(orig)
+    path = [[None for i in range(map_size)] for i in range(map_size)]
+
+    dir_x = [1, 0, -1, 0]
+    dir_y = [0, 1, 0, -1]
+    visitados[orig_x][orig_y] = True
+
+    while len(traverse_queue) > 0:
+        head = traverse_queue.popleft()
+
+        for i in range(4):
+            x = dir_x[i] + head[0] 
+            y = dir_y[i] + head[1]
+
+            outside_borders = x <= 0 or y <= 0 or x >= map_size or y >= map_size
+            if outside_borders:
+                continue
+            
+            if visitados[x][y]: # pode causar erro de Array out of Bounds se isso ficar no if acima
+                continue
+
+            if x == dest_x and y == dest_y:
+                path[x][y] = (x - dir_x[i], y - dir_y[i])
+                return rebuildPath(path, orig, dest)
+
+            if game_map[x][y] == None and not visitados[x][y]:
+                path[x][y] = (x - dir_x[i], y - dir_y[i])
+                visitados[x][y] = True
+                traverse_queue.append((x,y))
+    
+    return None
+
+
 class Entity(object):
     id = ""            # id da entidade
     life = 0           # quanto dano a entidade pode receber antes de morrer
@@ -52,6 +108,7 @@ class Entity(object):
     vision_range = 0   # quão longe uma entidade consegue detectar entidades inimigas
     attack_range = 0   # quão longe uma entidade consegue atacar uma entidade inimiga
     curret_state = 0   # estado atual da entidade, controlado pela lógica do jogo
+    current_ammo = 0   # atributo exclusivo ao tanque, que indica que tipo de munição está carregada
     size = (-1,-1)     # tamanho da entidade, usado para desenhar ela na tela
 
     def __init__(self, pos_x, pos_y):
@@ -78,17 +135,28 @@ class Entity(object):
 
         del self # objeto só é removido inteiramente da memória se não há mais referencias a ele
 
-    def fire(self, isTankFiring = False, projType = None): # metodo para uma entidade disparar um ataque
+    def fire(self, target, isTankFiring = False, projType = None): # metodo para uma entidade disparar um ataque
         self.action_points -= 1
         self.ammo_amount -= 1
 
         if isTankFiring: # como um tanque tem dois tipos de municao, tem um tratamento especial
-            pass
+            if self.current_ammo == projType:
+                if self.current_ammo == 2:
+                    TankHERound(self.position, target, self.id)
+                else:
+                    TankAPRound(self.position, target, self.id)
         else:
             if self.ammo_type == 2: # se não é um tanque, ou é um soldado
-                P = RifleRound(self.position[0],self.position[1], self.id)
+                RifleRound(self.position, target, self.id)
             else: # ou artilharia
-                pass
+                ArtilleryRound(self.position, target, self.id)
+
+    def calculateMove(self, target): # target sera uma tupla
+        path = findPathOnGameMap(self.position, target, Logic.map_size)
+        return path
+
+    def updatePosition(self, new_position):
+        self.position = new_position
 
 class Soldier(Entity):
 
@@ -135,6 +203,7 @@ class MediumTank(Tank):
         self.armor = 50
         self.ammo_amount = 1
         self.ammo_type = 3
+        self.current_ammo = 2
         self.action_points = 2
         self.attack_range = 150
         self.size = (3,7)
@@ -155,7 +224,8 @@ class ArtilleryTank(Tank):
 
 class Projectile(object):
     id = ""
-    position = ""
+    position = (0,0)
+    target = (0,0)
     parent_id = "" # id da entidade que criou este projetil
     damage = 0
     radius = 0
@@ -163,9 +233,10 @@ class Projectile(object):
     dispersion = (0,0) # (% de chance do projétil desviar, direcao p/ onde vai desviar (-1 esq, 1 dir))
     # projéteis começam a desviar depois de passar 10% do seu TTL
 
-    def __init__(self, pos_x, pos_y, parent_id):
+    def __init__(self, position, target, parent_id):
         self.id = str(randint(1000, 9999))
-        self.position = (pos_x, pos_y)
+        self.position = position
+        self.target = target
         self.parent_id = parent_id
 
     def checkCollision(self, target):
@@ -207,8 +278,8 @@ class Projectile(object):
 
 class RifleRound(Projectile):
     
-    def __init__(self, pos_x, pos_y, parent_id):
-        super().__init__(pos_x, pos_y,parent_id)
+    def __init__(self, position, target, parent_id):
+        super().__init__(position, target, parent_id)
         self.id = "2"+self.id
         self.damage = 10 + randint(-5,5)
         self.armor_penetration = randint(0,10)
@@ -220,8 +291,8 @@ class RifleRound(Projectile):
 
 class TankAPRound(Projectile):
 
-    def __init__(self, pos_x, pos_y, parent_id):
-        super().__init__(pos_x, pos_y,parent_id)
+    def __init__(self, position, target, parent_id):
+        super().__init__(position, target,parent_id)
         self.id = "31"+self.id
         self.damage = 100 + randint(-20,20)
         self.armor_penetration = 40 + randint(-5,15)
@@ -233,8 +304,8 @@ class TankAPRound(Projectile):
 
 class TankHERound(Projectile):
 
-    def __init__(self, pos_x, pos_y, parent_id):
-        super().__init__(pos_x, pos_y,parent_id)
+    def __init__(self, position, target, parent_id):
+        super().__init__(position, target,parent_id)
         self.id = "32"+self.id
         self.damage = 150 + randint(-20,20)
         self.armor_penetration = 5 + randint(0,5)
@@ -247,8 +318,8 @@ class TankHERound(Projectile):
 
 class ArtilleryRound(Projectile):
 
-    def __init__(self, pos_x, pos_y, parent_id):
-        super().__init__(pos_x, pos_y,parent_id)
+    def __init__(self, position, target, parent_id):
+        super().__init__(position, target, parent_id)
         self.id = "4"+self.id
         self.damage = 500
         self.armor_penetration = 5 + randint(-5,15)
