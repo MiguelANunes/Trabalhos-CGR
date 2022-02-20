@@ -5,6 +5,7 @@ from collections import deque
 entity_list = {} # mantendo uma lista de todas as entidades atualmente existentes
 terrain_list = {}
 projectile_list = {}
+action_buffer = {} # ações a serem tomadas serão guardadas nessa lista
 
 map_size = 100
 game_map = [[None for i in range(map_size)] for i in range(map_size)]
@@ -78,3 +79,6 @@ def loadMap(): # carrega todos os componentes do jogo no mapa
         game_map[item.position[0]][item.position[1]] = chave
     for chave, item in projectile_list.items():
         game_map[item.position[0]][item.position[1]] = chave
+
+def gameStart():
+    pass

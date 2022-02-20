@@ -6,9 +6,6 @@ import Logic
 TODO:   
     Estados de entidades
     Calcular explosões
-    Arrumar método fire para lidar com os MachineGunners
-    Arrumar método fira - balas são criadas e ficam na lista, ao invés de serem criadas indo pra algum lugar
-    Metodo para projéteis moverem
     Metodo para entidades recarregarem (Lógica)
 
 IDs:
@@ -96,6 +93,47 @@ def findPathOnGameMap(orig, dest, map_size): # BFS para achar um caminho entre d
     
     return None
 
+def findDiagonalPathOnGameMap(orig, dest, map_size): # BFS para achar um caminho entre dois pontos com movimentos diagonais
+    game_map = Logic.game_map
+
+    orig_x, orig_y = orig
+    dest_x, dest_y = dest
+    x, y = 0, 0
+
+    visitados = [[False for i in range(map_size)] for i in range(map_size)]
+    visitados[orig_x][orig_y] = True
+    traverse_queue = deque()
+    traverse_queue.append(orig)
+    path = [[None for i in range(map_size)] for i in range(map_size)]
+
+    dir_x = [1, -1, 0, 0, 1, 1, -1, -1]
+    dir_y = [0, 0, 1, -1, 1, -1, 1, -1]
+    visitados[orig_x][orig_y] = True
+
+    while len(traverse_queue) > 0:
+        head = traverse_queue.popleft()
+
+        for i in range(8):
+            x = dir_x[i] + head[0] 
+            y = dir_y[i] + head[1]
+
+            outside_borders = x <= 0 or y <= 0 or x >= map_size or y >= map_size
+            if outside_borders:
+                continue
+            
+            if visitados[x][y]: # pode causar erro de Array out of Bounds se isso ficar no if acima
+                continue
+
+            if x == dest_x and y == dest_y:
+                path[x][y] = (x - dir_x[i], y - dir_y[i])
+                return rebuildPath(path, orig, dest)
+
+            if game_map[x][y] == None and not visitados[x][y]:
+                path[x][y] = (x - dir_x[i], y - dir_y[i])
+                visitados[x][y] = True
+                traverse_queue.append((x,y))
+    
+    return None
 
 class Entity(object):
     id = ""            # id da entidade
@@ -136,24 +174,38 @@ class Entity(object):
         del self # objeto só é removido inteiramente da memória se não há mais referencias a ele
 
     def fire(self, target, isTankFiring = False, projType = None): # metodo para uma entidade disparar um ataque
-        self.action_points -= 1
-        self.ammo_amount -= 1
 
-        if isTankFiring: # como um tanque tem dois tipos de municao, tem um tratamento especial
-            if self.current_ammo == projType:
-                if self.current_ammo == 2:
-                    TankHERound(self.position, target, self.id)
+        if self.ammo_amount >= 1:
+            if isTankFiring: # como um tanque tem dois tipos de municao, tem um tratamento especial
+                self.action_points -= 1
+                self.ammo_amount -= 1
+                if self.current_ammo == projType:
+                    if self.current_ammo == 2:
+                        TankHERound(self.position, target, self.id).createProjectile()
+                        
+                    else:
+                        TankAPRound(self.position, target, self.id).createProjectile()
                 else:
-                    TankAPRound(self.position, target, self.id)
+                    return -1 # se retorna -1 significa que não pode atirar
+            else:
+                if self.id.startswith("12"): # se não é um tanque, ou é um soldado
+                    if self.ammo_amount >= 10:
+                        self.action_points -= 1 # MGs atiram 10 de uma vez
+                        self.ammo_amount -= 10
+                        for _ in range(10):
+                            RifleRound(self.position, target, self.id).createProjectile()
+                    else:
+                        return -1
+                elif self.id.startswith("11"): 
+                    RifleRound(self.position, target, self.id).createProjectile()
+                else: # ou artilharia
+                    ArtilleryRound(self.position, target, self.id).createProjectile()
         else:
-            if self.ammo_type == 2: # se não é um tanque, ou é um soldado
-                RifleRound(self.position, target, self.id)
-            else: # ou artilharia
-                ArtilleryRound(self.position, target, self.id)
+            return -1
 
     def calculateMove(self, target): # target sera uma tupla
         path = findPathOnGameMap(self.position, target, Logic.map_size)
-        return path
+        Logic.action_buffer[self.id] = path
 
     def updatePosition(self, new_position):
         self.position = new_position
@@ -238,6 +290,16 @@ class Projectile(object):
         self.position = position
         self.target = target
         self.parent_id = parent_id
+
+    def createProjectile(self):
+        path = findDiagonalPathOnGameMap(self.position, self.target, Logic.map_size)
+        for pos,pair in enumerate(path): # aplicando a dispersão nos projéteis disparados
+            if randint(1, 100) <= self.dispersion[0]:
+                for i in range(pos, len(path)):
+                    pair = path[i]
+                    pair = (pair[0]+self.dispersion[1], pair[1])
+                    path[i] = pair
+        Logic.action_buffer[self.id] = path
 
     def checkCollision(self, target):
         # uma bala é destruida sempre que atinge alguma coisa
