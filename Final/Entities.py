@@ -135,6 +135,61 @@ def findDiagonalPathOnGameMap(orig, dest, map_size): # BFS para achar um caminho
     
     return None
 
+def createRifleman(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y):
+    pos_x = randint(lower_limit_x, upper_limit_x)
+    pos_y = randint(lower_limit_y, upper_limit_y)
+    while (pos_x, pos_y) in Logic.occupied_spaces:
+        pos_x = randint(lower_limit_x, upper_limit_x)
+        pos_y = randint(lower_limit_y, upper_limit_y)
+    
+    R = Rifleman(pos_x, pos_y)
+    Logic.used_ids.append(R.id)
+    return R.id
+
+def createMachineGunner(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y):
+    pos_x = randint(lower_limit_x, upper_limit_x)
+    pos_y = randint(lower_limit_y, upper_limit_y)
+    while (pos_x, pos_y) in Logic.occupied_spaces:
+        pos_x = randint(lower_limit_x, upper_limit_x)
+        pos_y = randint(lower_limit_y, upper_limit_y)
+    
+    M = MachineGunner(pos_x, pos_y)
+    Logic.used_ids.append(M.id)
+    return M.id
+
+def createTank(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y):
+    pos_x = randint(lower_limit_x, upper_limit_x)
+    pos_y = randint(lower_limit_y, upper_limit_y)
+    while (pos_x, pos_y) in Logic.occupied_spaces:
+        pos_x = randint(lower_limit_x, upper_limit_x)
+        pos_y = randint(lower_limit_y, upper_limit_y)
+    
+    T = Tank(pos_x, pos_y)
+    Logic.used_ids.append(T.id)
+    return T.id
+
+def createArtilleryTank(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y):
+    pos_x = randint(lower_limit_x, upper_limit_x)
+    pos_y = randint(lower_limit_y, upper_limit_y)
+    while (pos_x, pos_y) in Logic.occupied_spaces:
+        pos_x = randint(lower_limit_x, upper_limit_x)
+        pos_y = randint(lower_limit_y, upper_limit_y)
+    
+    A = ArtilleryTank(pos_x, pos_y)
+    Logic.used_ids.append(A.id)
+    return A.id
+
+def generateRandomTerrain(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y): # gera um objeto de terreno que é colocado no cenário
+    pos_x = randint(lower_limit_x, upper_limit_x)
+    pos_y = randint(lower_limit_y, upper_limit_y)
+    while (pos_x, pos_y) in Logic.occupied_spaces:
+        pos_x = randint(lower_limit_x, upper_limit_x)
+        pos_y = randint(lower_limit_y, upper_limit_y)
+    x = randint(1,3)
+    T = Terrain(pos_x, pos_y, (x, x))
+    Logic.used_ids.append(T.id)
+    return T.id
+
 class Entity(object):
     id = ""            # id da entidade
     life = 0           # quanto dano a entidade pode receber antes de morrer
@@ -217,7 +272,7 @@ class Soldier(Entity):
         self.life = 10
         self.armor = 0 
         self.ammo_type = 2
-        self.vision_range = 150 + randint(-25,25)
+        self.vision_range = 40 + randint(-15,15)
         self.size = (1,1)
 
 class Rifleman(Soldier):
@@ -225,9 +280,11 @@ class Rifleman(Soldier):
     def __init__(self,pos_x,pos_y):
         super().__init__(pos_x,pos_y)
         self.id = "11"+self.id
+        while self.id in Logic.used_ids:
+            self.id = "11"+str(randint(100, 999))
         self.ammo_amount = 8
         self.action_points = 3
-        self.attack_range = 50
+        self.attack_range = 30
         Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
 class MachineGunner(Soldier):
@@ -235,9 +292,11 @@ class MachineGunner(Soldier):
     def __init__(self,pos_x,pos_y):
         super().__init__(pos_x,pos_y)
         self.id = "12"+self.id
+        while self.id in Logic.used_ids:
+            self.id = "12"+str(randint(100, 999))
         self.ammo_amount = 200
         self.action_points = 2
-        self.attack_range = 100
+        self.attack_range = 40
         Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
 class Tank(Entity):
@@ -245,19 +304,21 @@ class Tank(Entity):
     def __init__(self, pos_x, pos_y):
         super().__init__(pos_x,pos_y)
         self.life = 100
-        self.vision_range = 300 + randint(-5,50)
+        self.vision_range = 60 + randint(-5,5)
 
 class MediumTank(Tank):
 
     def __init__(self, pos_x, pos_y):
         super().__init__(pos_x,pos_y)
         self.id = "13"+self.id
+        while self.id in Logic.used_ids:
+            self.id = "13"+str(randint(100, 999))
         self.armor = 50
         self.ammo_amount = 1
         self.ammo_type = 3
         self.current_ammo = 2
         self.action_points = 2
-        self.attack_range = 150
+        self.attack_range = 50
         self.size = (3,7)
         Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
@@ -266,11 +327,13 @@ class ArtilleryTank(Tank):
     def __init__(self, pos_x, pos_y):
         super().__init__(pos_x,pos_y)
         self.id = "14"+self.id
+        while self.id in Logic.used_ids:
+            self.id = "14"+str(randint(100, 999))
         self.armor = 25
         self.ammo_amount = 1
         self.ammo_type = 4
         self.action_points = 1
-        self.attack_range = 300
+        self.attack_range = 100
         self.size = (2,5)
         Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
@@ -299,6 +362,7 @@ class Projectile(object):
                     pair = path[i]
                     pair = (pair[0]+self.dispersion[1], pair[1])
                     path[i] = pair
+        Logic.used_ids.append(self.id)
         Logic.action_buffer[self.id] = path
 
     def checkCollision(self, target):
@@ -343,9 +407,11 @@ class RifleRound(Projectile):
     def __init__(self, position, target, parent_id):
         super().__init__(position, target, parent_id)
         self.id = "2"+self.id
+        while self.id in Logic.used_ids:
+            self.id = "2"+str(randint(1000, 9999))
         self.damage = 10 + randint(-5,5)
         self.armor_penetration = randint(0,10)
-        self.ttl = 150 + randint(-50, 50)
+        self.ttl = 40 + randint(-20, 20)
         x = randint(0,1)
         x = 1 if x == 0 else -1
         self.dispersion = (25, x)
@@ -356,9 +422,11 @@ class TankAPRound(Projectile):
     def __init__(self, position, target, parent_id):
         super().__init__(position, target,parent_id)
         self.id = "31"+self.id
+        while self.id in Logic.used_ids:
+            self.id = "31"+str(randint(1000, 9999))
         self.damage = 100 + randint(-20,20)
         self.armor_penetration = 40 + randint(-5,15)
-        self.ttl = 200 + randint(-50, 50)
+        self.ttl = 60 + randint(-10, 10)
         x = randint(0,1)
         x = 1 if x == 0 else -1
         self.dispersion = (10, x)
@@ -369,9 +437,11 @@ class TankHERound(Projectile):
     def __init__(self, position, target, parent_id):
         super().__init__(position, target,parent_id)
         self.id = "32"+self.id
+        while self.id in Logic.used_ids:
+            self.id = "32"+str(randint(1000, 9999))
         self.damage = 150 + randint(-20,20)
         self.armor_penetration = 5 + randint(0,5)
-        self.ttl = 200 + randint(-50, 50)
+        self.ttl = 50 + randint(-20, 20)
         self.radius = 2
         x = randint(0,1)
         x = 1 if x == 0 else -1
@@ -383,9 +453,11 @@ class ArtilleryRound(Projectile):
     def __init__(self, position, target, parent_id):
         super().__init__(position, target, parent_id)
         self.id = "4"+self.id
+        while self.id in Logic.used_ids:
+            self.id = "4"+str(randint(1000, 9999))
         self.damage = 500
         self.armor_penetration = 5 + randint(-5,15)
-        self.ttl = 500 + randint(-200, 0)
+        self.ttl = 100 + randint(-50, 0)
         self.radius = 5
         x = randint(0,1)
         x = 1 if x == 0 else -1
@@ -400,6 +472,8 @@ class Terrain(object):
 
     def __init__(self, pos_x, pos_y, size):
         self.id = "91" + str(randint(100, 999))
+        while self.id in Logic.used_ids:
+            self.id = "91" + str(randint(100, 999))
         self.position = (pos_x, pos_y)
         self.size = size # tamnho em x e y do objeto
         self.blocks_path = True
