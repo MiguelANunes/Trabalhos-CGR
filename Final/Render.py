@@ -1,9 +1,14 @@
+from time import sleep
 import numpy
 import math
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from OpenGL.arrays import vbo
+
+import pygame                   #pip install pygame
+from pygame.locals import *
+
 width, height = 1000, 768
 
 
@@ -75,15 +80,36 @@ def draw_rect(t1, t2, cx, cy, rotacao, tipoGL):
 
     desrotaciona(meiox, meioy, rotacao)
 
+
+def draw_explosion(cx, cy, raio):
+    tamanhoExplosao = 10
+    raio = raio/10
+    for i in range(tamanhoExplosao):        #esse loop deveria redesenhar o raio da eplosão a cada frame, mas n sei fazer isso aa
+        draw_circle(raio*i, raio*i, cx, cy, GL_LINE_LOOP)
+
+
+def draw_Text(x, y, text):     
+    font = pygame.font.SysFont('arial', 64)                                           
+    textSurface = font.render(text, True, (255, 255, 255, 255), (0, 66, 0, 255))
+    textData = pygame.image.tostring(textSurface, "RGBA", True)
+    glWindowPos2d(x, y)
+    glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
+
+
 def draw():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
     refresh2d()
     glColor3f(0.0, 0.0, 1.0)
-    draw_circle( 5, 5, 100, 100, GL_POLYGON) # (tamanho x, tamanho y, coordenada x, coordenada y, tipo do objeto a ser desenhado)
-    draw_rect( 80, 100, 300, 300, 0, GL_QUADS)
-    draw_rect( 80, 100, 300, 300, 30, GL_QUADS) # (tamanho x, tamanho y, rotação, coordenada x, coordenada y, tipo do objeto)
-    draw_rect( 80, 100, 500, 300, 0, GL_QUADS)
+    #draw_circle( 5, 5, 100, 100, GL_POLYGON) # (tamanho x, tamanho y, coordenada x, coordenada y, tipo do objeto a ser desenhado)
+    #draw_rect( 80, 100, 300, 300, 0, GL_QUADS)
+    #draw_rect( 80, 100, 300, 300, 30, GL_QUADS) # (tamanho x, tamanho y, rotação, coordenada x, coordenada y, tipo do objeto)
+    #draw_rect( 80, 100, 500, 300, 0, GL_QUADS)
+    #draw_explosion(250, 250, 2)
+
+    draw_circle( 5, 5, 100, 100, GL_POLYGON)
+    pygame.font.init()
+    draw_Text(140, 120, "sample text")
 
     glutSwapBuffers()
 
@@ -96,6 +122,7 @@ def main():
     glutDisplayFunc(draw)
     glutIdleFunc(draw)
     glutMainLoop()
+
 
 if __name__ == "__main__":
     main()
