@@ -38,6 +38,17 @@ IDs:
             um objeto deste tipo
     92xxx: Objetos que não bloqueiam caminha de entidades e projéteis, quando projéteis de artilharia explodem, há uma
             pequena chance de um objeto deste tipo ser inserido na posição onde estava esse projétil
+
+Estados:
+    Cada entidade pode estar em 1 de 3 estados, que definem quais ações as entidades vão tomar, assim como as chances delas
+    tomarem essas ações, os estados são os seguinte:
+
+    0: Estado calmo, a entidade não sabe da posição de nenhum inimigo e portanto vai apenas se mover pelo mapa ou ficar onde está
+    1: Estado alerta, a entidade encontrou um inimigo (está dentro do alcançe de visão dela, mas não dentro do alcançe de ataque) 
+        e notificou as outras entidades da equipe, vai procurar e se mover para trás de objetos do cenário, ou continuar avançando, 
+        apenas MGs podem começar a atirar e apenas na posição onde o inimigo foi detectado
+    2: Estado combate, há entidades inimigas dentro do alcançe de ataque da entidade, ela livremente ataca o inimigo e notifica
+        outras entidades da equipe sobre a posição do inimigo
 """
 
 def rebuildPath(path, orig, dest):
@@ -207,6 +218,7 @@ class Entity(object):
     def __init__(self, pos_x, pos_y):
         self.id = str(randint(100, 999))
         self.position = (pos_x, pos_y)
+        self.curret_state = 0
 
     def takeDamage(self, damage):
         if damage >= self.armor: # trivialmente verdadeiro no caso do soldado
@@ -232,7 +244,7 @@ class Entity(object):
 
         if self.ammo_amount >= 1:
             if isTankFiring: # como um tanque tem dois tipos de municao, tem um tratamento especial
-                self.action_points -= 1
+                # self.action_points -= 1
                 self.ammo_amount -= 1
                 if self.current_ammo == projType:
                     if self.current_ammo == 2:
@@ -245,8 +257,8 @@ class Entity(object):
             else:
                 if self.id.startswith("12"): # se não é um tanque, ou é um soldado
                     if self.ammo_amount >= 10:
-                        self.action_points -= 1 # MGs atiram 10 de uma vez
-                        self.ammo_amount -= 10
+                        # self.action_points -= 1 
+                        self.ammo_amount -= 10 # MGs atiram 10 de uma vez
                         for _ in range(10):
                             RifleRound(self.position, target, self.id).createProjectile()
                     else:
@@ -260,7 +272,8 @@ class Entity(object):
 
     def calculateMove(self, target): # target sera uma tupla
         path = findPathOnGameMap(self.position, target, Logic.map_size)
-        Logic.action_buffer[self.id] = path
+        return (self.id, path)
+        # Logic.action_buffer[self.id] = path
 
     def updatePosition(self, new_position):
         self.position = new_position
@@ -363,7 +376,8 @@ class Projectile(object):
                     pair = (pair[0]+self.dispersion[1], pair[1])
                     path[i] = pair
         Logic.used_ids.append(self.id)
-        Logic.action_buffer[self.id] = path
+        return (self.id, path)
+        # Logic.action_buffer[self.id] = path
 
     def checkCollision(self, target):
         # uma bala é destruida sempre que atinge alguma coisa

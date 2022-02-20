@@ -87,23 +87,46 @@ def populateTeams(team, lower_limit_x, upper_limit_x, lower_limit_y, upper_limit
 
     team.append(Entities.createArtilleryTank(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y))
 
-def gameStart():
-    blu_team = [] # listas de ids de entidades nas equipes
-    red_team = []
+def takeTurn(team):
 
-    # equipe azul começa na parte de baixo do mapa, vermelha no topo do mapa
-    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 0, map_size, 0, 10
-    populateTeams(blu_team, lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y)
+    for entity_id in team: # iterando pelas ids de entidades na lista da equipe
+        entity = entity_list[entity_id]
+        if entity.current_state == 0:
+            stateCalm(entity)
 
-    lower_limit_y, upper_limit_y = map_size-10, map_size
-    populateTeams(red_team, lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y)
+        elif entity.current_state == 1:
+            stateAlert(entity)
 
-    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 15, map_size-15, 30, 60
-    total_elements = randint(20,30)
-    for _ in range(total_elements):
-        Entities.generateRandomTerrain(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y)
-    
-    loadMap()
+        else:
+            stateCombat(entity)
 
+def stateCalm(entity):
+    pass
+    # calcular as ações a serem feitas
+    # colocar a lista de ações numa fila
+    # colocar num dict {id_entidade: lista_ações}
+    # quando mudar de estado, apaga a entrada daquele id no dict
 
-    
+def stateAlert(entity):
+    pass
+
+def stateCombat(entity):
+    pass
+
+def changeState(entity, new_state):
+    pass
+
+def actionMove():
+    pass
+
+def actionWait():
+    pass
+
+def actionAttack():
+    pass
+
+def actionReload():
+    pass
+
+def actionBroadcast():
+    pass
