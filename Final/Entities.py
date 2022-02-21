@@ -176,7 +176,7 @@ def createTank(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y):
         pos_x = randint(lower_limit_x, upper_limit_x)
         pos_y = randint(lower_limit_y, upper_limit_y)
     
-    T = Tank(pos_x, pos_y)
+    T = MediumTank(pos_x, pos_y)
     used_ids.append(T.id)
     return T.id
 
@@ -221,6 +221,9 @@ class Entity(object):
         self.id = str(randint(100, 999))
         self.position = (pos_x, pos_y)
         self.curret_state = 0
+
+    def getState(self):
+        return self.curret_state
 
     def changeState(self, new_state):
         self.curret_state = new_state
@@ -304,6 +307,7 @@ class Rifleman(Soldier):
         self.ammo_amount = 8
         self.action_points = 3
         self.attack_range = 30
+        self.curret_state = 0
         Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
 class MachineGunner(Soldier):

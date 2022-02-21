@@ -6,6 +6,8 @@ from collections import deque
 
 blu_team = [] # listas de ids de entidades nas equipes
 red_team = []
+blu_points = 0
+red_points = 0
 
 def gameLoop():
     turn = 0
@@ -14,15 +16,19 @@ def gameLoop():
         Logic.takeTurn(blu_team)
         Logic.takeTurn(red_team)
         
-        for id, path in Logic.move_buffer: # para cada movimento no buffer de movimentos
+        for id, path in Logic.move_buffer.items(): # para cada movimento no buffer de movimentos
             # Render.render(game_map) # renderiza o mapa
             # recupera o movimento e a entidade que fará ele
-            while Logic.entity_list[id].action_points > 0 and len(path) > 0:
-                Logic.entity_list[id].action_points -= 1
+            input("Passou do loop move_buffer")
+            entity = Logic.entity_list[id]
+            while entity.action_points > 0 and len(path) > 0:
+                input("Passou do loop action_points")
+                entity.action_points -= 1
                 # se a entidade tiver pontos de ação suficientes
-                old_pos = Logic.entity_list[id].position
+                old_pos = entity.position
                 new_pos = path.popleft()
-                
+                entity.updatePosition(new_pos)                
+
                 Logic.occupied_spaces.remove(old_pos)
                 Logic.occupied_spaces.append(new_pos)
 
@@ -50,9 +56,9 @@ def gameLoop():
         turn += 1
         # se uma das equipes perdeu todas as entidades, jogo termina
         if len(blu_team) == 0:
-            return 0
+            return (0, blu_points)
         if len(red_team) == 0:
-            return 1
+            return (1, red_points)
 
         for _, entity in Logic.entity_list.items():
             entity.resetActionPoints()
@@ -76,7 +82,7 @@ def gameStart():
 def main():
     gameStart()
     result = gameLoop()
-    if result == 0: # Renderizar esse texto na tela
+    if result[0] == 0: # Renderizar esse texto na tela
         print("Red Wins !")
     else:
         print("Blu Wins !")
