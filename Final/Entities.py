@@ -59,7 +59,8 @@ def rebuildPath(path, orig, dest):
 
     while path[i][j] != orig:
         final_path.append(path[i][j])
-        i, j = path[i][j]
+        if path[i][j] != None:
+            i, j = path[i][j]
     final_path.reverse()
     return final_path
 
@@ -153,14 +154,17 @@ def createRifleman(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y):
     while (pos_x, pos_y) in Logic.occupied_spaces:
         pos_x = randint(lower_limit_x, upper_limit_x)
         pos_y = randint(lower_limit_y, upper_limit_y)
-    
-    dir_x = [1, 0, -1, 0]
-    dir_y = [0, 1, 0, -1]
-    for dirx, diry in zip(dir_x, dir_y):
-        while (pos_x+dirx, pos_y+diry) in Logic.occupied_spaces:
-            pos_x = randint(lower_limit_x, upper_limit_x)
-            pos_y = randint(lower_limit_y, upper_limit_y)
-    
+
+    while (pos_x, pos_y) in Logic.occupied_spaces:
+        pos_x = randint(lower_limit_x, upper_limit_x)
+        pos_y = randint(lower_limit_y, upper_limit_y)
+        dir_x = [1, -1, 0, 0, 1, 1, -1, -1]
+        dir_y = [0, 0, 1, -1, 1, -1, 1, -1]
+        for dirx, diry in zip(dir_x, dir_y):
+            while (pos_x+dirx, pos_y+diry) in Logic.occupied_spaces:
+                pos_x = randint(lower_limit_x, upper_limit_x)
+                pos_y = randint(lower_limit_y, upper_limit_y)
+
     R = Rifleman(pos_x, pos_y)
     used_ids.append(R.id)
     return R.id
@@ -172,12 +176,15 @@ def createMachineGunner(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit
         pos_x = randint(lower_limit_x, upper_limit_x)
         pos_y = randint(lower_limit_y, upper_limit_y)
     
-    dir_x = [1, 0, -1, 0]
-    dir_y = [0, 1, 0, -1]
-    for dirx, diry in zip(dir_x, dir_y):
-        while (pos_x+dirx, pos_y+diry) in Logic.occupied_spaces:
-            pos_x = randint(lower_limit_x, upper_limit_x)
-            pos_y = randint(lower_limit_y, upper_limit_y)
+    while (pos_x, pos_y) in Logic.occupied_spaces:
+        pos_x = randint(lower_limit_x, upper_limit_x)
+        pos_y = randint(lower_limit_y, upper_limit_y)
+        dir_x = [1, -1, 0, 0, 1, 1, -1, -1]
+        dir_y = [0, 0, 1, -1, 1, -1, 1, -1]
+        for dirx, diry in zip(dir_x, dir_y):
+            while (pos_x+dirx, pos_y+diry) in Logic.occupied_spaces:
+                pos_x = randint(lower_limit_x, upper_limit_x)
+                pos_y = randint(lower_limit_y, upper_limit_y)
 
     M = MachineGunner(pos_x, pos_y)
     used_ids.append(M.id)
@@ -190,12 +197,15 @@ def createTank(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y):
         pos_x = randint(lower_limit_x, upper_limit_x)
         pos_y = randint(lower_limit_y, upper_limit_y)
     
-    dir_x = [1, 0, -1, 0]
-    dir_y = [0, 1, 0, -1]
-    for dirx, diry in zip(dir_x, dir_y):
-        while (pos_x+dirx, pos_y+diry) in Logic.occupied_spaces:
-            pos_x = randint(lower_limit_x, upper_limit_x)
-            pos_y = randint(lower_limit_y, upper_limit_y)
+    while (pos_x, pos_y) in Logic.occupied_spaces:
+        pos_x = randint(lower_limit_x, upper_limit_x)
+        pos_y = randint(lower_limit_y, upper_limit_y)
+        dir_x = [1, -1, 0, 0, 1, 1, -1, -1]
+        dir_y = [0, 0, 1, -1, 1, -1, 1, -1]
+        for dirx, diry in zip(dir_x, dir_y):
+            while (pos_x+dirx, pos_y+diry) in Logic.occupied_spaces:
+                pos_x = randint(lower_limit_x, upper_limit_x)
+                pos_y = randint(lower_limit_y, upper_limit_y)
 
     T = MediumTank(pos_x, pos_y)
     used_ids.append(T.id)
@@ -208,12 +218,15 @@ def createArtilleryTank(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit
         pos_x = randint(lower_limit_x, upper_limit_x)
         pos_y = randint(lower_limit_y, upper_limit_y)
     
-    dir_x = [1, 0, -1, 0]
-    dir_y = [0, 1, 0, -1]
-    for dirx, diry in zip(dir_x, dir_y):
-        while (pos_x+dirx, pos_y+diry) in Logic.occupied_spaces:
-            pos_x = randint(lower_limit_x, upper_limit_x)
-            pos_y = randint(lower_limit_y, upper_limit_y)
+    while (pos_x, pos_y) in Logic.occupied_spaces:
+        pos_x = randint(lower_limit_x, upper_limit_x)
+        pos_y = randint(lower_limit_y, upper_limit_y)
+        dir_x = [1, -1, 0, 0, 1, 1, -1, -1]
+        dir_y = [0, 0, 1, -1, 1, -1, 1, -1]
+        for dirx, diry in zip(dir_x, dir_y):
+            while (pos_x+dirx, pos_y+diry) in Logic.occupied_spaces:
+                pos_x = randint(lower_limit_x, upper_limit_x)
+                pos_y = randint(lower_limit_y, upper_limit_y)
 
     A = ArtilleryTank(pos_x, pos_y)
     used_ids.append(A.id)
@@ -397,7 +410,6 @@ class Projectile(object):
     radius = 0
     ttl = 0
     dispersion = (0,0) # (% de chance do projétil desviar, direcao p/ onde vai desviar (-1 esq, 1 dir))
-    # projéteis começam a desviar depois de passar 10% do seu TTL
 
     def __init__(self, position, target, parent_id):
         self.id = str(randint(1000, 9999))

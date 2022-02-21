@@ -8,6 +8,7 @@ terrain_list = {}
 projectile_list = {}
 move_buffer = {} # movimentos a serem tomados serão guardadas nessa lista
 projectile_buffer = {} # projéteis que devem se mover num turno
+explosion_buffer = {} # projéteis de explosão que devem se mover num turno
 occupied_spaces = [] # lista de tuplas (x,y) de pontos no mapa que já estão ocupados
 
 map_size = 100
@@ -120,65 +121,10 @@ def createExplosion(position, radius, damage):
     
     projectiles = []
     for _ in range(50):
-        projectiles.append(Entities.Projectile(position, None, None).explosionProjectile(damage, radius+randint(-1,2)))
-
-    
-
-    # marca as celulas ao redor de position[0],position[1] com uma explosão
-    # explosões dão damage pontos de dano em todas as unidades nas celulas marcadas com explosão
-    # repete isso radius vezes, sendo que após cada iteração, celulas marcadas com explosão anteriormente são desmarcadas
-    # e novas celulas são marcadas
-
-    # Explosões são bloqueadas por objetos do terreno
-
-    """
-    Primeiro momento:
-    X X X X X
-    X X X X X
-    X X E X X
-    X X X X X
-    X X X X X
-
-    Depois de uma iterção:
-    X X X X X
-    X E E E X
-    X E X E X
-    X E E E X
-    X X X X X
-
-    Depois de duas:
-    E E E E E
-    E X X X E
-    E X X X E
-    E X X X E
-    E E E E E
-
-    Assim por diante
-    
-    Com um objeto do terreno:
-
-        Primeiro momento:
-        X X X X X
-        X T T T X
-        X X E X X
-        X X X X X
-        X X X X X
-
-        Depois de uma iterção:
-        X X X X X
-        X T T T X
-        X E X E X
-        X E E E X
-        X X X X X
-
-        Depois de duas:
-        X X X X X
-        E T T T E
-        E X X X E
-        E X X X E
-        E E E E E
-    """
-    pass
+        p = Entities.Projectile(position, None, None)
+        p.explosionProjectile(damage, radius+randint(-1,2))
+        projectiles.append(p)
+        explosion_buffer[p.id] = p
 
 def projectileCollision(proj, position):
     # se um projétil explosivo atinge algo, explode
@@ -188,8 +134,11 @@ def projectileCollision(proj, position):
         del proj
 
     elif game_map[position[0]][position[1]].statswith("9"):
-        if randint(1, 100) <= 35: # 35% de chance do projetil não colidir c/ terreno
+        if randint(1, 100) <= 35 and not proj.id in explosion_buffer: # 35% de chance do projetil não colidir c/ terreno
             return
+        if proj.id in explosion_buffer:
+            del explosion_buffer[proj.id]
+            del proj
         del projectile_list[proj.id]
         del proj # se uma bala normal atinge algo do terreno, nada acontece
     
@@ -249,13 +198,6 @@ def takeTurn(team):
         else:
             stateCombat(entity, team)
 
-# calcular as ações a serem feitas - DONE
-# colocar a lista de ações numa fila - DONE
-# colocar num dict {id_entidade: lista_ações} - DONE
-# quando for renderizar, itera por cada elemento do dict - da pop na lista,
-#   atualiza o game_map e renderiza o movimento
-# quando mudar de estado, apaga a entrada daquele id no dict - DONE
-
 def stateCalm(entity, team): 
     # entidades calmas procuram por inimigos, se acharem mudar pro estado de atenção
     # se não encontrar decide entre esperar e se mover
@@ -279,7 +221,7 @@ def stateCalm(entity, team):
             actionWait(entity)
         
         else: # se não achar nada tenta se mover pro meio do mapa
-            pos = (50+randint(-5,5), 50+randint(-5,5))
+            pos = (50+randint(-25,25), 50+randint(-5,5))
             i = 0
             while pos in occupied_spaces:
                 pos = (50+randint(-5-i,5+i), 50+randint(-5-i,5+i))
@@ -424,5 +366,5 @@ def actionBroadcast(entity, team, new_state):
     friendly_positions = findAllOnGameMap(entity.position, 10, "1", team, True)
     for pos_x, pos_y in friendly_positions:
         id = game_map[pos_x][pos_y]
-        if entity_list[id] < new_state: # < new_state significa que só pode aumentar o estado
+        if entity_list[id].getState() < new_state: # < new_state significa que só pode aumentar o estado
             entity_list[id].changeState(new_state) # i.e, calmo -> alerta, alerta -> combate

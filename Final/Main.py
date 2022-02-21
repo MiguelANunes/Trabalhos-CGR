@@ -9,6 +9,11 @@ red_team = []
 blu_points = 0
 red_points = 0
 
+def getBluTeam():
+    return blu_team
+def getRedTeam():
+    return red_team
+
 def gameLoop():
     turn = 0
 
@@ -62,11 +67,11 @@ def gameLoop():
 
         for _, entity in Logic.entity_list.items():
             entity.resetActionPoints()
-
+    
 def gameStart():
 
     # equipe azul começa na parte de baixo do mapa, vermelha no topo do mapa
-    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 0, Logic.map_size-1, 0, 10
+    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 1, Logic.map_size-1, 1, 10
     Logic.populateTeams(blu_team, lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y)
 
     lower_limit_y, upper_limit_y = Logic.map_size-10, Logic.map_size-1
