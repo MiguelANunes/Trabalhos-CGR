@@ -3,12 +3,13 @@ import Logic
 import Render
 from random import randint
 
+blu_team = [] # listas de ids de entidades nas equipes
+red_team = []
+
 def gameLoop():
     turn = 0
 
 def gameStart():
-    blu_team = [] # listas de ids de entidades nas equipes
-    red_team = []
 
     # equipe azul começa na parte de baixo do mapa, vermelha no topo do mapa
     lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 0, Logic.map_size-1, 0, 10
