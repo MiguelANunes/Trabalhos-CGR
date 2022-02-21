@@ -1,4 +1,5 @@
 import Entities
+import Main
 from random import randint
 from collections import deque
 
@@ -171,6 +172,29 @@ def createExplosion(position, radius, damage):
     """
     pass
 
+def projectileCollision(proj, position):
+    # se um projétil explosivo atinge algo, explode
+    if proj.id.startswith("32") or proj.id.startswith("4"):
+        del projectile_list[proj.id]
+        createExplosion(proj.position, proj.radius, proj.damage)
+        del proj
+
+    elif game_map[position[0]][position[1]].statswith("9"): 
+        del projectile_list[proj.id]
+        del proj # se uma bala normal atinge algo do terreno, nada acontece
+    
+    else: # se o alvo não é um terreno então é uma entidade - não vamos lidar com colisão entre projéteis
+        del projectile_list[proj.id]
+        target_id = game_map[position[0]][position[1]]
+        target = entity_list[target_id]
+        if target.takeDamage(proj.damage) == 0: # se perdeu toda a vida
+            if target_id in Main.blu_team:
+                Main.blu_team.remove(target_id)
+                target.isKilled()
+            else:
+                Main.red_team.remove(target_id)
+                target.isKilled()
+
 def loadMap(): # carrega todos os componentes do jogo no mapa
     for chave, item in entity_list.items():
         game_map[item.position[0]][item.position[1]] = chave
@@ -221,7 +245,8 @@ def stateCalm(entity: Entities.Entity, team):
     if pos != None:
         entity.changeState(1)
         actionBroadcast(entity, team, 1)
-        del move_buffer[entity.id]
+        if entity.id in move_buffer:
+            del move_buffer[entity.id]
         stateAlert(entity, team, pos)
 
     action = randint(1, 100)
@@ -241,6 +266,8 @@ def stateAlert(entity: Entities.Entity, team, position = None):
     if findOnGameMap(entity.position, entity.attack_range, "1", team) != None:
         entity.changeState(2)
         actionBroadcast(entity, team, 2)
+        if entity.id in move_buffer:
+            del move_buffer[entity.id]
         del move_buffer[entity.id]
         stateCombat(entity, team)
 
@@ -248,6 +275,8 @@ def stateAlert(entity: Entities.Entity, team, position = None):
     if findOnGameMap(entity.position, entity.vision_range, "1", team) == None:
         entity.changeState(0)
         # actionBroadcast(entity, team, 1)
+        if entity.id in move_buffer:
+            del move_buffer[entity.id]
         del move_buffer[entity.id]
         stateCalm(entity, team)
 
@@ -282,6 +311,8 @@ def stateCombat(entity: Entities.Entity, team):
     if findOnGameMap(entity.position, entity.attack_range, "1", team) == None:
         entity.changeState(1)
         # actionBroadcast(entity, team, 2)
+        if entity.id in move_buffer:
+            del move_buffer[entity.id]
         del move_buffer[entity.id]
         stateAlert(entity, team)
 

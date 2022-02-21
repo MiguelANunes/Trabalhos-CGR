@@ -228,13 +228,16 @@ class Entity(object):
     def takeDamage(self, damage):
         if damage >= self.armor: # trivialmente verdadeiro no caso do soldado
             if damage >= self.life:
-                self.isKilled # mata a entidade
+                return 0
+                # self.isKilled # mata a entidade
             else:
                 self.life -= damage
+                return 1
         else:
             if damage * 2 < self.armor:
-                return # se dano for menor que metade do valor da armadura é ignorado
+                return 1 # se dano for menor que metade do valor da armadura é ignorado
             self.life -= damage//100
+            return 1
 
     def isKilled(self):
         del Logic.entity_list[self.id] # remove a id da entidade da lista de entidades existentes
@@ -370,31 +373,29 @@ class Projectile(object):
                     pair = (pair[0]+self.dispersion[1], pair[1])
                     path[i] = pair
         used_ids.append(self.id)
-        Logic.projectile_buffer[self.id] = path
+        Logic.projectile_buffer[self.id] = deque(path)
 
-    def checkCollision(self, target):
-        # uma bala é destruida sempre que atinge alguma coisa
-        if target.id != self.parent_id: # projetil não colide com a entidade que gerou ele
-            if self.position == target.position: # posição sempre é uma tupla (x,y)
+    # def checkCollision(self, target):
+    #     # uma bala é destruida sempre que atinge alguma coisa
+    #     if target.id != self.parent_id: # projetil não colide com a entidade que gerou ele
+    #         if self.position == target.position: # posição sempre é uma tupla (x,y)
 
-                if self.id.startswith("32") or self.id.startswith("4"):
-                    del Logic.projectile_list[self.id]
-                    Logic.createExplosion(self.position, self.radius, self.damage)
+                
 
-                    if self.id.startswith("4") and randint(1,100) <= 10: # se é artilharia, pode criar um buraco
-                        T = Terrain(self.position[0], self.position[1], (1,1))
-                        T.setNonBlocker()
-                        Logic.terrain_list[T.id] = T
-                    del self
+    #                 if self.id.startswith("4") and randint(1,100) <= 10: # se é artilharia, pode criar um buraco
+    #                     T = Terrain(self.position[0], self.position[1], (1,1))
+    #                     T.setNonBlocker()
+    #                     Logic.terrain_list[T.id] = T
+    #                 del self
 
-                elif target.id.statswith("9"): 
-                    del Logic.projectile_list[self.id]
-                    del self # se uma bala normal atinge algo do terreno, nada acontece
+    #             elif target.id.statswith("9"): 
+    #                 del Logic.projectile_list[self.id]
+    #                 del self # se uma bala normal atinge algo do terreno, nada acontece
 
-                else: # se o alvo não é um terreno então é uma entidade - não vamos lidar com colisão entre projéteis
-                    del Logic.projectile_list[self.id]
-                    target.takeDamage(self.damage)
-                    del self
+    #             else: # se o alvo não é um terreno então é uma entidade - não vamos lidar com colisão entre projéteis
+    #                 del Logic.projectile_list[self.id]
+    #                 target.takeDamage(self.damage)
+    #                 del self
 
     def zeroTTL(self): # se TTL = 0, projétil é deletado
         del Logic.projectile_list[self.id] 
