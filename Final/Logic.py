@@ -353,7 +353,7 @@ def actionMove(entity, target):
     if entity.action_points > 0:
         # entity.action_points -= 1 # gasta os pontos de ação na Main
         move = entity.calculateMove(target)
-        if move != None:
+        if move[1] != None:
             move_buffer[move[0]] = deque(move[1])
 
 def actionWait(entity):

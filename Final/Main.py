@@ -19,10 +19,10 @@ def gameLoop():
         for id, path in Logic.move_buffer.items(): # para cada movimento no buffer de movimentos
             # Render.render(game_map) # renderiza o mapa
             # recupera o movimento e a entidade que fará ele
-            input("Passou do loop move_buffer")
+            # input("Passou do loop move_buffer")
             entity = Logic.entity_list[id]
             while entity.action_points > 0 and len(path) > 0:
-                input("Passou do loop action_points")
+                # input("Passou do loop action_points")
                 entity.action_points -= 1
                 # se a entidade tiver pontos de ação suficientes
                 old_pos = entity.position
