@@ -116,6 +116,14 @@ def findAllOnGameMap(orig, depth, obj_type, team=None, is_own_team=False):
         depth -= 1
 
 def createExplosion(position, radius, damage):
+    # gera 50 projéteis especiais para explosão
+    
+    projectiles = []
+    for _ in range(50):
+        projectiles.append(Entities.Projectile(position, None, None).explosionProjectile(damage, radius+randint(-1,2)))
+
+    
+
     # marca as celulas ao redor de position[0],position[1] com uma explosão
     # explosões dão damage pontos de dano em todas as unidades nas celulas marcadas com explosão
     # repete isso radius vezes, sendo que após cada iteração, celulas marcadas com explosão anteriormente são desmarcadas
@@ -179,7 +187,9 @@ def projectileCollision(proj, position):
         createExplosion(proj.position, proj.radius, proj.damage)
         del proj
 
-    elif game_map[position[0]][position[1]].statswith("9"): 
+    elif game_map[position[0]][position[1]].statswith("9"):
+        if randint(1, 100) <= 35: # 35% de chance do projetil não colidir c/ terreno
+            return
         del projectile_list[proj.id]
         del proj # se uma bala normal atinge algo do terreno, nada acontece
     
@@ -269,7 +279,12 @@ def stateCalm(entity, team):
             actionWait(entity)
         
         else: # se não achar nada tenta se mover pro meio do mapa
-            actionMove(entity, (50+randint(-5,5), 50+randint(-5,5)))
+            pos = (50+randint(-5,5), 50+randint(-5,5))
+            i = 0
+            while pos in occupied_spaces:
+                pos = (50+randint(-5-i,5+i), 50+randint(-5-i,5+i))
+                i += 1
+            actionMove(entity, pos)
 
 def stateAlert(entity, team, position = None):
     # se há um inimigo dentro do alcançe de ataque da unidade, entra em combate

@@ -72,7 +72,7 @@ def gameStart():
     lower_limit_y, upper_limit_y = Logic.map_size-10, Logic.map_size-1
     Logic.populateTeams(red_team, lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y)
 
-    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 15, Logic.map_size-15, 30, 60
+    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 10, Logic.map_size-10, 30, 60
     total_elements = randint(20,30)
     for _ in range(total_elements):
         Entities.generateRandomTerrain(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y)
