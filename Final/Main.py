@@ -35,11 +35,12 @@ def gameLoop():
             current_pos = proj.position
             next_pos = path.popleft() # ultima posição do projétil
 
+            # Render.render_proj(proj, next_pos)
+
             if current_pos in Logic.occupied_spaces:
                 Logic.projectileCollision(proj, current_pos)
+                # Render.render(game_map) # renderiza o mapa
                 del proj
-
-            # Render.render_proj(proj, next_pos)
 
             proj.position = new_pos
             proj.ttl -= randint(1,5)
@@ -52,6 +53,9 @@ def gameLoop():
             return 0
         if len(red_team) == 0:
             return 1
+
+        for _, entity in Logic.entity_list.items():
+            entity.resetActionPoints()
 
 def gameStart():
 
@@ -69,9 +73,13 @@ def gameStart():
     
     Logic.loadMap()
 
-
 def main():
     gameStart()
+    result = gameLoop()
+    if result == 0: # Renderizar esse texto na tela
+        print("Red Wins !")
+    else:
+        print("Blu Wins !")
 
 if __name__ == "__main__":
     main()

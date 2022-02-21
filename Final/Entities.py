@@ -7,7 +7,7 @@ used_ids = [] # lista de todos os ids que já estão associados a alguma coisa
 """
 TODO:   
     Calcular explosões
-    Reiniciar action Points
+    Comandos do player
 
 IDs:
     IDs de entidades começam com 1 seguido por mais um digito que define o tipo de entidade e então 
@@ -229,7 +229,6 @@ class Entity(object):
         if damage >= self.armor: # trivialmente verdadeiro no caso do soldado
             if damage >= self.life:
                 return 0
-                # self.isKilled # mata a entidade
             else:
                 self.life -= damage
                 return 1
@@ -238,6 +237,16 @@ class Entity(object):
                 return 1 # se dano for menor que metade do valor da armadura é ignorado
             self.life -= damage//100
             return 1
+
+    def resetActionPoints(self):
+        if self.id.startswith("11"):
+            self.action_points = 3
+        elif self.id.startswith("12"):
+            self.action_points = 2
+        elif self.id.startswith("13"):
+            self.action_points = 2
+        else:
+            self.action_points = 1
 
     def isKilled(self):
         del Logic.entity_list[self.id] # remove a id da entidade da lista de entidades existentes
