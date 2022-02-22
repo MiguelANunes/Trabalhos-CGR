@@ -4,23 +4,24 @@ import Render
 from random import randint
 from collections import deque
 
-blu_team = [] # listas de ids de entidades nas equipes
-red_team = []
-blu_points = 0
-red_points = 0
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
+from OpenGL.arrays import vbo
+
+width, height = 1000, 800
 
 def getBluTeam():
     return blu_team
 def getRedTeam():
     return red_team
-
+  
 def gameLoop():
     turn = 0
 
     while(True):
         Logic.takeTurn(blu_team)
         Logic.takeTurn(red_team)
-        
         for id, path in Logic.move_buffer.items(): # para cada movimento no buffer de movimentos
             # Render.render(game_map) # renderiza o mapa
             # recupera o movimento e a entidade que fará ele
@@ -41,6 +42,8 @@ def gameLoop():
                 Logic.game_map[new_pos[0]][new_pos[1]] = id
 
                 # Render.render(game_map) # renderiza o mapa
+                
+                Render.draw(red_team, blu_team)
 
         for proj, path in Logic.projectile_buffer:
             current_pos = proj.position
@@ -67,11 +70,14 @@ def gameLoop():
 
         for _, entity in Logic.entity_list.items():
             entity.resetActionPoints()
-    
+        
+    #Render.draw()
+    #input()
+
 def gameStart():
 
     # equipe azul começa na parte de baixo do mapa, vermelha no topo do mapa
-    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 1, Logic.map_size-1, 1, 10
+    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 0, Logic.map_size-1, 0, 10
     Logic.populateTeams(blu_team, lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y)
 
     lower_limit_y, upper_limit_y = Logic.map_size-10, Logic.map_size-1
@@ -84,8 +90,33 @@ def gameStart():
     
     Logic.loadMap()
 
+def getBluTeam():
+    return blu_team
+def getRedTeam():
+    return red_team
+
 def main():
     gameStart()
+    glutInit()
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH)
+    glutInitWindowSize(width, height)
+    glutInitWindowPosition(0, 0)
+    glutCreateWindow("Trabalho Final de CGR")
+    glutDisplayFunc(Render.draw)
+    glMatrixMode(GL_PROJECTION)
+    gluPerspective(40, 1, 1, 40)
+    glMatrixMode(GL_MODELVIEW)
+    gluLookAt(0, 0, 10,
+              0, 0, 0,
+              0, 1, 0)
+    glPushMatrix()
+    glutIdleFunc(Render.draw)
+    #glutMainLoop()
+
+    #print(getBluTeam())
+    #print(getRedTeam())
+    #print("socorro")
+
     result = gameLoop()
     if result[0] == 0: # Renderizar esse texto na tela
         print("Red Wins !")
