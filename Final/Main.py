@@ -9,7 +9,12 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from OpenGL.arrays import vbo
 
-width, height = 1000, 800
+width, height = 1000, 700
+
+blu_team = []
+red_team = []
+blu_points = 0
+red_points = 0
 
 def getBluTeam():
     return blu_team
@@ -77,7 +82,7 @@ def gameLoop():
 def gameStart():
 
     # equipe azul começa na parte de baixo do mapa, vermelha no topo do mapa
-    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 0, Logic.map_size-1, 0, 10
+    lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y = 5, Logic.map_size-1, 1, 10
     Logic.populateTeams(blu_team, lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y)
 
     lower_limit_y, upper_limit_y = Logic.map_size-10, Logic.map_size-1
@@ -89,11 +94,6 @@ def gameStart():
         Entities.generateRandomTerrain(lower_limit_x, upper_limit_x, lower_limit_y, upper_limit_y)
     
     Logic.loadMap()
-
-def getBluTeam():
-    return blu_team
-def getRedTeam():
-    return red_team
 
 def main():
     gameStart()

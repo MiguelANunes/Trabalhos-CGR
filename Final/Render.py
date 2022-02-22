@@ -14,7 +14,7 @@ import Logic
 import Main
 import Entities
 
-width, height = 1000, 800
+width, height = 1000, 700
 
 
 def refresh2d():
@@ -174,7 +174,7 @@ def draw(red_team, blu_team):
 
     pygame.font.init()
     glColor3f(26/255, 82/255, 33/255)
-    draw_rect(800,800,0,0,0,GL_POLYGON)
+    draw_rect(700,700,0,0,0,GL_POLYGON)
     glColor3f(0.0, 0.0, 1.0)
 
     #draw_tank(100,100,"blue")
@@ -191,8 +191,8 @@ def draw(red_team, blu_team):
         coordx = Logic.occupied_spaces[i][0]
         coordy = Logic.occupied_spaces[i][1]
         id = Logic.game_map[coordx][coordy]
-        print ("vermelho: ", Main.red_points)
-        print ("azul: ", Main.blu_points)
+        # print ("vermelho: ", Main.red_points)
+        # print ("azul: ", Main.blu_points)
         #print(Main.getBluTeam())
         #print(Main.getRedTeam())
         #print (id, id in Main.red_team)
@@ -200,36 +200,36 @@ def draw(red_team, blu_team):
         if (str(id).startswith("11")):
             #print(id in Main.red_team)
             if(id in red_team):
-                draw_soldado(coordx*8,coordy*8,"red","rf")
+                draw_soldado(coordx*7,coordy*7,"red","rf")
             elif(id in blu_team):
-                draw_soldado(coordx*8,coordy*8,"blue","rf")
+                draw_soldado(coordx*7,coordy*7,"blue","rf")
             else:
-                draw_soldado(coordx*8,coordy*8,"none","rf")
+                draw_soldado(coordx*7,coordy*7,"none","rf")
         elif (str(id).startswith("12")):
             if(id in red_team):
-                draw_soldado(coordx*8,coordy*8,"red","mg")
+                draw_soldado(coordx*7,coordy*7,"red","mg")
             elif(id in blu_team):
-                draw_soldado(coordx*8,coordy*8,"blue","mg")
+                draw_soldado(coordx*7,coordy*7,"blue","mg")
             else:
-                draw_soldado(coordx*8,coordy*8,"none","mg")
+                draw_soldado(coordx*7,coordy*7,"none","mg")
         elif (str(id).startswith("13")):
             if(id in red_team):
-                draw_tank(coordx*8,coordy*8,"red")
+                draw_tank(coordx*7,coordy*7,"red")
             elif(id in blu_team):
-                draw_tank(coordx*8,coordy*8,"blue")
+                draw_tank(coordx*7,coordy*7,"blue")
             else:
-                draw_tank(coordx*8,coordy*8,"none")
+                draw_tank(coordx*7,coordy*7,"none")
         elif (str(id).startswith("14")):
             if(id in red_team):
-                draw_tank(coordx*8,coordy*8,"red")
+                draw_tank(coordx*7,coordy*7,"red")
             elif(id in blu_team):
-                draw_tank(coordx*8,coordy*8,"blue")
+                draw_tank(coordx*7,coordy*7,"blue")
             else:
-                draw_tank(coordx*8,coordy*8,"none")
+                draw_tank(coordx*7,coordy*7,"none")
         elif (str(id).startswith("91")):
-            draw_rect(8,8,coordx*8, coordy*8,0,GL_POLYGON)
+            draw_rect(8,8,coordx*7, coordy*7,0,GL_POLYGON)
         elif (str(id).startswith("92")):
-            draw_rect(8,8,coordx*8, coordy*8,0,GL_POLYGON)
+            draw_rect(8,8,coordx*7, coordy*7,0,GL_POLYGON)
 
 
 
