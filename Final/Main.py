@@ -11,18 +11,17 @@ from OpenGL.arrays import vbo
 
 width, height = 1000, 800
 
-blu_team = [] # listas de ids de entidades nas equipes
-red_team = []
-blu_points = 0
-red_points = 0
-
+def getBluTeam():
+    return blu_team
+def getRedTeam():
+    return red_team
+  
 def gameLoop():
     turn = 0
 
     while(True):
         Logic.takeTurn(blu_team)
         Logic.takeTurn(red_team)
-        
         for id, path in Logic.move_buffer.items(): # para cada movimento no buffer de movimentos
             # Render.render(game_map) # renderiza o mapa
             # recupera o movimento e a entidade que fará ele
@@ -117,6 +116,7 @@ def main():
     #print(getBluTeam())
     #print(getRedTeam())
     #print("socorro")
+
     result = gameLoop()
     if result[0] == 0: # Renderizar esse texto na tela
         print("Red Wins !")
