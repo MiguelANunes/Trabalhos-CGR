@@ -44,21 +44,34 @@ def draw_soldado(cx, cy, team, tipo):
         if (team == "red"):
             glColor3f(1,0,0)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_LINE_LOOP)
+            draw_circle(tamx-0.09, tamy-0.09, cx, cy, GL_LINE_LOOP)
         if (team == "blue"):
             glColor3f(0,0,1)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_LINE_LOOP)
+            draw_circle(tamx-0.09, tamy-0.09, cx, cy, GL_LINE_LOOP)
         if (team == "none"):
             glColor3f(109/255, 110/255, 109/255)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
     elif (tipo == "mg"):
         if (team == "red"):
             glColor3f(1,0,0)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_LINE_LOOP)
+            draw_circle(tamx-0.09, tamy-0.09, cx, cy, GL_LINE_LOOP)
             glColor3f(109/255, 110/255, 109/255)
             draw_cano(15, 5, cx+tamx/2-5/2, cy+tamy/2, -90, GL_POLYGON)
         if (team == "blue"):
             glColor3f(0,0,1)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_LINE_LOOP)
+            draw_circle(tamx-0.09, tamy-0.09, cx, cy, GL_LINE_LOOP)
             glColor3f(109/255, 110/255, 109/255)
             draw_cano(15, 5, cx+tamx/2+5/2, cy+tamy/2, 90, GL_POLYGON)
         if (team == "none"):
@@ -145,27 +158,44 @@ def draw_Text(x, y, text):
     glWindowPos2d(x, y)
     glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)   
 
-def draw_tank(cx, cy, team):
+def draw_tank(cx, cy, team, tipo):
     tamx = 40
     tamy = 60
     if (team == "red"):
         glColor3f(1,0,0)
         draw_rect(tamx, tamy, cx, cy, 0, GL_POLYGON)
+        glColor3f(0,0,0)
+        draw_rect(tamx, tamy, cx, cy, 0, GL_LINE_LOOP)
+        draw_rect(tamx-0.09, tamy-0.09, cx, cy, 0, GL_LINE_LOOP)
         glColor3f(109/255, 110/255, 109/255)
         draw_cano(60, 10, cx+tamx/2-5, cy+tamy/2, -90, GL_POLYGON)
-        draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        if(tipo == "mt"):
+            draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        elif(tipo == "at"):  
+            draw_rect(20,20,cx+tamx/2-10, cy+tamy/2-10,0,GL_POLYGON)
     elif(team == "blue"):
         glColor3f(0,0,1)
         draw_rect(tamx, tamy, cx, cy, 0, GL_POLYGON)
+        glColor3f(0,0,0)
+        draw_rect(tamx, tamy, cx, cy, 0, GL_LINE_LOOP)
+        draw_rect(tamx-0.09, tamy-0.09, cx, cy, 0, GL_LINE_LOOP)
         glColor3f(109/255, 110/255, 109/255)
         draw_cano(60, 10, cx+tamx/2+5, cy+tamy/2, 90, GL_POLYGON)
-        draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        if(tipo == "mt"):
+            draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        elif(tipo == "at"):
+            glColor3f(109/255, 110/255, 109/255)
+            draw_rect(20,20,cx+tamx/2-10, cy+tamy/2-10,0,GL_POLYGON)
     elif(team == "none"):
         glColor3f(109/255, 110/255, 109/255)
         draw_rect(tamx, tamy, cx, cy, 0, GL_POLYGON)
         glColor3f(109/255, 110/255, 109/255)
         draw_cano(60, 10, cx+tamx/2+5, cy+tamy/2, 90, GL_POLYGON)
-        draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        if(tipo == "mt"):
+            draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        elif(tipo == "at"):
+            glColor3f(109/255, 110/255, 109/255)
+            draw_rect(10,10,cx+tamx/2, cy+tamy/2,0,GL_POLYGON)
 
 def draw(red_team, blu_team):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -214,18 +244,18 @@ def draw(red_team, blu_team):
                 draw_soldado(coordx*8,coordy*8,"none","mg")
         elif (str(id).startswith("13")):
             if(id in red_team):
-                draw_tank(coordx*8,coordy*8,"red")
+                draw_tank(coordx*8,coordy*8,"red", "mt")
             elif(id in blu_team):
-                draw_tank(coordx*8,coordy*8,"blue")
+                draw_tank(coordx*8,coordy*8,"blue", "mt")
             else:
-                draw_tank(coordx*8,coordy*8,"none")
+                draw_tank(coordx*8,coordy*8,"none", "mt")
         elif (str(id).startswith("14")):
             if(id in red_team):
-                draw_tank(coordx*8,coordy*8,"red")
+                draw_tank(coordx*8,coordy*8,"red", "at")
             elif(id in blu_team):
-                draw_tank(coordx*8,coordy*8,"blue")
+                draw_tank(coordx*8,coordy*8,"blue", "at")
             else:
-                draw_tank(coordx*8,coordy*8,"none")
+                draw_tank(coordx*8,coordy*8,"none", "at")
         elif (str(id).startswith("91")):
             draw_rect(8,8,coordx*8, coordy*8,0,GL_POLYGON)
         elif (str(id).startswith("92")):
