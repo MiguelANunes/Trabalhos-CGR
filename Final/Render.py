@@ -38,8 +38,8 @@ def draw_circle(tx, ty, cx, cy, tipoGL):
     glEnd()
 
 def draw_soldado(cx, cy, team, tipo):
-    tamx = 1
-    tamy = 1
+    tamx = 0.5
+    tamy = 0.5
     if (tipo == "rf"):
         if (team == "red"):
             glColor3f(1,0,0)
@@ -55,12 +55,12 @@ def draw_soldado(cx, cy, team, tipo):
             glColor3f(1,0,0)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
             glColor3f(109/255, 110/255, 109/255)
-            draw_cano(15, 5, cx+tamx/2-5/2, cy+tamy/2, -90, GL_POLYGON)
+            draw_cano(10, 3, cx+tamx/2-5/2, cy+tamy/2, -90, GL_POLYGON)
         if (team == "blue"):
             glColor3f(0,0,1)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
             glColor3f(109/255, 110/255, 109/255)
-            draw_cano(15, 5, cx+tamx/2+5/2, cy+tamy/2, 90, GL_POLYGON)
+            draw_cano(10, 3, cx+tamx/2+5/2, cy+tamy/2, 90, GL_POLYGON)
         if (team == "none"):
             glColor3f(109/255, 110/255, 109/255)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
@@ -177,8 +177,6 @@ def draw(red_team, blu_team):
     draw_rect(700,700,0,0,0,GL_POLYGON)
     glColor3f(0.0, 0.0, 1.0)
 
-    #draw_tank(100,100,"blue")
-    #draw_tank(800,600,"red")
 
     draw_Text(800, 780, "Pontuação: ")
     draw_Text(905, 780, "45")
@@ -187,18 +185,11 @@ def draw(red_team, blu_team):
     #Logic.occupied_spaces x,y -> olhar no game_map -> ver o id e testar se ta no time vermelho ou azul
 
     for i, x in enumerate(Logic.occupied_spaces):
-        #print(x)
         coordx = Logic.occupied_spaces[i][0]
         coordy = Logic.occupied_spaces[i][1]
         id = Logic.game_map[coordx][coordy]
-        # print ("vermelho: ", Main.red_points)
-        # print ("azul: ", Main.blu_points)
-        #print(Main.getBluTeam())
-        #print(Main.getRedTeam())
-        #print (id, id in Main.red_team)
-        #print (id, id in Main.blu_team)
+
         if (str(id).startswith("11")):
-            #print(id in Main.red_team)
             if(id in red_team):
                 draw_soldado(coordx*7,coordy*7,"red","rf")
             elif(id in blu_team):

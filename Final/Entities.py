@@ -57,8 +57,17 @@ def rebuildPath(path, orig, dest):
     i, j = end
     final_path = [end]
 
+    if orig == end:
+        return final_path
+
     while path[i][j] != orig:
+        # print(i,j)
+        # print(path[i][j])
         final_path.append(path[i][j])
+        # if path[i][j] == None:
+            # print(orig)
+            # print(i, j)
+            # input()
         if path[i][j] != None:
             i, j = path[i][j]
     final_path.reverse()
@@ -432,6 +441,7 @@ class Projectile(object):
                     pair = (pair[0]+self.dispersion[1], pair[1])
                     path[i] = pair
         used_ids.append(self.id)
+        Logic.projectile_buffer[self.id] = self
         Logic.projectile_buffer[self.id] = deque(path)
 
     # def checkCollision(self, target):
