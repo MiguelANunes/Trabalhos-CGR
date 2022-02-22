@@ -1,0 +1,34 @@
+Lista de Tarefas:
+
+	Pessoa |  Atividade  |      Data Inicial    | Hora Inicial | [Data Final] | Hora Final | Tempo Empregado Aproximado 
+	
+	Miguel    Criação dos arquivos  14/02/2022   09:00 hrs      10:00 hrs	  1 Hora		 			  
+			  / Inicio da Implementação
+			  
+	Miguel   Início da Implementação de Entidades  15/02/2022  15:00 hrs 18:00hrs  3 horas
+			 Criando classes
+	
+	Miguel   Implementando de Entidades  17/02/2022  15:00 hrs 18:00hrs  3 horas
+			 Criando mais classes e métodos
+			 
+	Miguel   Implementando de Entidades  19/02/2022  10:00 hrs 12:00hrs  2 horas
+			 Criando mais classes e métodos
+			 
+	Miguel   Término Implementanção de Entidades  19/02/2022  14:00 hrs 18:00hrs  4 horas
+			 Últimas classes e métodos feitos
+			 
+	Miguel   Início Implementação da Lógica  19/02/2022  20:00 hrs 20/02/2022 01:00hrs  5 horas
+			 Criação algumas funções, algoritmo de pathfinding
+			 
+	Miguel   Implementando a Lógica  20/02/2022  10:00 hrs 11:30hrs  1 horas e 30 minutos
+			 Inicio da implementação dos estados e ações
+			 
+	Miguel   Implementando a Lógica  20/02/2022  15:00 hrs 18:00hrs  3 horas
+			 Implementando os estados e ações
+			 
+	Miguel   Término da implementação da Lógica  20/02/2022  20:00 hrs 21/02/2022 01:30hrs  5 horas e 30 minutos
+			 Fim da implementação dos estados, resolvendo alguns bugs
+			 
+	Miguel   Início da implementação da Main  21/02/2022  15:00 hrs 20:30hrs  5 horas e 30 minutos
+			 Criando as funções da main, refatorando lógica e entidades
+
