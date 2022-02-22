@@ -9,7 +9,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from OpenGL.arrays import vbo
 
-width, height = 1000, 700
+width, height = 1050, 700
 
 blu_team = []
 red_team = []
@@ -54,7 +54,7 @@ def gameLoop():
 
                 # Render.render(game_map) # renderiza o mapa
                 
-                Render.draw(red_team, blu_team)
+                Render.draw(red_team, blu_team, red_points, blu_points)
 
         for id, path in Logic.projectile_buffer.items():
             proj = Logic.projectile_list[id]

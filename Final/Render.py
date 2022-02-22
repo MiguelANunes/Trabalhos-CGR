@@ -14,7 +14,7 @@ import Logic
 import Main
 import Entities
 
-width, height = 1000, 700
+width, height = 1050, 700
 
 
 def refresh2d():
@@ -44,29 +44,39 @@ def draw_soldado(cx, cy, team, tipo):
         if (team == "red"):
             glColor3f(1,0,0)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_LINE_LOOP)
+            draw_circle(tamx-0.09, tamy-0.09, cx, cy, GL_LINE_LOOP)
         if (team == "blue"):
             glColor3f(0,0,1)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_LINE_LOOP)
+            draw_circle(tamx-0.09, tamy-0.09, cx, cy, GL_LINE_LOOP)
         if (team == "none"):
             glColor3f(109/255, 110/255, 109/255)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
     elif (tipo == "mg"):
         if (team == "red"):
             glColor3f(1,0,0)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_LINE_LOOP)
+            draw_circle(tamx-0.09, tamy-0.09, cx, cy, GL_LINE_LOOP)
             glColor3f(109/255, 110/255, 109/255)
-            draw_cano(10, 3, cx+tamx/2-5/2, cy+tamy/2, -90, GL_POLYGON)
+            draw_cano(10, 3, cx+tamx/2-3/2, cy+tamy/2, -90, GL_POLYGON)
         if (team == "blue"):
             glColor3f(0,0,1)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(0,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_LINE_LOOP)
+            draw_circle(tamx-0.09, tamy-0.09, cx, cy, GL_LINE_LOOP)
             glColor3f(109/255, 110/255, 109/255)
-            draw_cano(10, 3, cx+tamx/2+5/2, cy+tamy/2, 90, GL_POLYGON)
+            draw_cano(10, 3, cx+tamx/2+3/2, cy+tamy/2, 90, GL_POLYGON)
         if (team == "none"):
             glColor3f(109/255, 110/255, 109/255)
             draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
-
-
-
 
 '''
   4____t3_____3
@@ -145,41 +155,63 @@ def draw_Text(x, y, text):
     glWindowPos2d(x, y)
     glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)   
 
-def draw_tank(cx, cy, team):
-    tamx = 40
-    tamy = 60
+def draw_tank(cx, cy, team, tipo):
+    tamx = 20
+    tamy = 30
     if (team == "red"):
         glColor3f(1,0,0)
         draw_rect(tamx, tamy, cx, cy, 0, GL_POLYGON)
+        glColor3f(0,0,0)
+        draw_rect(tamx, tamy, cx, cy, 0, GL_LINE_LOOP)
+        draw_rect(tamx-0.09, tamy-0.09, cx, cy, 0, GL_LINE_LOOP)
         glColor3f(109/255, 110/255, 109/255)
-        draw_cano(60, 10, cx+tamx/2-5, cy+tamy/2, -90, GL_POLYGON)
-        draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        draw_cano(30, 5, cx+tamx/2-5/2, cy+tamy/2, -90, GL_POLYGON)
+        if(tipo == "mt"):
+            draw_circle(0.75,0.75,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        elif(tipo == "at"):  
+            draw_rect(15,15,cx+tamx/2-15/2, cy+tamy/2-15/2,0,GL_POLYGON)
     elif(team == "blue"):
         glColor3f(0,0,1)
         draw_rect(tamx, tamy, cx, cy, 0, GL_POLYGON)
+        glColor3f(0,0,0)
+        draw_rect(tamx, tamy, cx, cy, 0, GL_LINE_LOOP)
+        draw_rect(tamx-0.09, tamy-0.09, cx, cy, 0, GL_LINE_LOOP)
         glColor3f(109/255, 110/255, 109/255)
-        draw_cano(60, 10, cx+tamx/2+5, cy+tamy/2, 90, GL_POLYGON)
-        draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        draw_cano(30, 5, cx+tamx/2+5/2, cy+tamy/2, 90, GL_POLYGON)
+        if(tipo == "mt"):
+            draw_circle(0.75,0.75,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        elif(tipo == "at"):
+            glColor3f(109/255, 110/255, 109/255)
+            draw_rect(15,15,cx+tamx/2-15/2, cy+tamy/2-15/2,0,GL_POLYGON)
     elif(team == "none"):
         glColor3f(109/255, 110/255, 109/255)
         draw_rect(tamx, tamy, cx, cy, 0, GL_POLYGON)
         glColor3f(109/255, 110/255, 109/255)
         draw_cano(60, 10, cx+tamx/2+5, cy+tamy/2, 90, GL_POLYGON)
-        draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        if(tipo == "mt"):
+            draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
+        elif(tipo == "at"):
+            glColor3f(109/255, 110/255, 109/255)
+            draw_rect(10,10,cx+tamx/2, cy+tamy/2,0,GL_POLYGON)
 
-def draw(red_team, blu_team):
+def draw(red_team, blu_team, red_points, blu_points):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
     refresh2d()
 
     pygame.font.init()
     glColor3f(26/255, 82/255, 33/255)
-    draw_rect(700,700,0,0,0,GL_POLYGON)
+    draw_rect(height,height,0,0,0,GL_POLYGON)
     glColor3f(0.0, 0.0, 1.0)
 
 
-    draw_Text(800, 780, "Pontuação: ")
-    draw_Text(905, 780, "45")
+    #draw_Text(800, 780, "Pontuação: ")
+    #draw_Text(905, 780, "45")
+    draw_Text(height, height-20, "Quantidade de tropas time vermelho:")
+    draw_Text(height, 80, "Quantidade de tropas time azul:")
+    #rifleman, machinegunner, mediumtank, artillerytank
+    qtdred = [0,0,0,0]
+    qtdblu = [0,0,0,0]    
     
     #ocupado = [(10,10),(20,20),(30,30),(40,40)]
     #Logic.occupied_spaces x,y -> olhar no game_map -> ver o id e testar se ta no time vermelho ou azul
@@ -188,62 +220,70 @@ def draw(red_team, blu_team):
         coordx = Logic.occupied_spaces[i][0]
         coordy = Logic.occupied_spaces[i][1]
         id = Logic.game_map[coordx][coordy]
-
         if (str(id).startswith("11")):
             if(id in red_team):
-                draw_soldado(coordx*7,coordy*7,"red","rf")
+                draw_soldado(coordx*(height/100),coordy*(height/100),"red","rf")
+                qtdred[0] += 1
             elif(id in blu_team):
-                draw_soldado(coordx*7,coordy*7,"blue","rf")
+                draw_soldado(coordx*(height/100),coordy*(height/100),"blue","rf")
+                qtdblu[0] += 1
             else:
-                draw_soldado(coordx*7,coordy*7,"none","rf")
+                draw_soldado(coordx*(height/100),coordy*(height/100),"none","rf")
         elif (str(id).startswith("12")):
             if(id in red_team):
-                draw_soldado(coordx*7,coordy*7,"red","mg")
+                draw_soldado(coordx*(height/100),coordy*(height/100),"red","mg")
+                qtdred[1] += 1
             elif(id in blu_team):
-                draw_soldado(coordx*7,coordy*7,"blue","mg")
+                draw_soldado(coordx*(height/100),coordy*(height/100),"blue","mg")
+                qtdblu[1] += 1
             else:
-                draw_soldado(coordx*7,coordy*7,"none","mg")
+                draw_soldado(coordx*(height/100),coordy*(height/100),"none","mg")
         elif (str(id).startswith("13")):
             if(id in red_team):
-                draw_tank(coordx*7,coordy*7,"red")
+                draw_tank(coordx*(height/100),coordy*(height/100),"red", "mt")
+                qtdred[2] += 1
             elif(id in blu_team):
-                draw_tank(coordx*7,coordy*7,"blue")
+                draw_tank(coordx*(height/100),coordy*(height/100),"blue", "mt")
+                qtdblu[2] += 1
             else:
-                draw_tank(coordx*7,coordy*7,"none")
+                draw_tank(coordx*(height/100),coordy*(height/100),"none", "mt")
         elif (str(id).startswith("14")):
             if(id in red_team):
-                draw_tank(coordx*7,coordy*7,"red")
+                draw_tank(coordx*(height/100),coordy*(height/100),"red", "at")
+                qtdred[3] += 1
             elif(id in blu_team):
-                draw_tank(coordx*7,coordy*7,"blue")
+                draw_tank(coordx*(height/100),coordy*(height/100),"blue", "at")
+                qtdblu[3] += 1
             else:
-                draw_tank(coordx*7,coordy*7,"none")
+                draw_tank(coordx*(height/100),coordy*(height/100),"none", "at")
         elif (str(id).startswith("91")):
-            draw_rect(8,8,coordx*7, coordy*7,0,GL_POLYGON)
+            glColor3f(109/255, 110/255, 109/255)
+            draw_rect(height/100,height/100,coordx*(height/100), coordy*(height/100),0,GL_POLYGON)
         elif (str(id).startswith("92")):
-            draw_rect(8,8,coordx*7, coordy*7,0,GL_POLYGON)
+            glColor3f(109/255, 110/255, 109/255)
+            draw_rect(height/100,height/100,coordx*(height/100), coordy*(height/100),0,GL_POLYGON)
 
+    #print("red: ", qtdred)
+    #print("blu: ", qtdblu)
 
+    draw_Text(height,height-(20*2), "Rifleman: ")
+    draw_Text(height+200,height-(20*2), str(qtdred[0]))
+    draw_Text(height,height-(20*3), "Machinegunner: ")
+    draw_Text(height+200,height-(20*3), str(qtdred[1]))
+    draw_Text(height,height-(20*4), "MediumTank: ")
+    draw_Text(height+200,height-(20*4), str(qtdred[2]))
+    draw_Text(height,height-(20*5), "ArtilleryTank: ")
+    draw_Text(height+200,height-(20*5), str(qtdred[3]))
 
+    draw_Text(height,60, "Rifleman: ")
+    draw_Text(height+200,60, str(qtdblu[0]))
+    draw_Text(height,40, "Machinegunner: ")
+    draw_Text(height+200,40, str(qtdblu[1]))
+    draw_Text(height,20, "MediumTank: ")
+    draw_Text(height+200,20, str(qtdblu[2]))
+    draw_Text(height,0, "ArtilleryTank: ")
+    draw_Text(height+200,0, str(qtdblu[3]))
     glutSwapBuffers()
-
-    '''
-        if (id in Main.red_team):
-            #glColor3f(1,0,0)
-            if (str(id).startswith("13")):
-                draw_tank(coordx*8,coordy*8,"red")
-            else:
-                draw_rect(5,5,coordx*8,coordy*8,0,GL_POLYGON)
-
-        elif (id in Main.blu_team):
-            glColor3f(0,0,1)
-            if (str(id).startswith("13")):
-                draw_tank(coordx*8,coordy*8,"blue")
-            else: 
-                draw_rect(5,5,coordx*8,coordy*8,0,GL_POLYGON)
-        else:
-            glColor3f(148/255, 148/255, 148/255)
-            draw_rect(5,5,coordx*8,coordy*8,0,GL_POLYGON)
-    '''
 
 
 
@@ -258,7 +298,6 @@ def main():
     glutDisplayFunc(draw)
     glutIdleFunc(draw)
     glutMainLoop()
-
 
 if __name__ == "__main__":
     main()
