@@ -126,14 +126,14 @@ def createExplosion(position, radius, damage):
         projectiles.append(p)
         explosion_buffer[p.id] = p
 
-def projectileCollision(proj, position):
+def projectileCollision(proj, position, blu_team, red_team):
     # se um projétil explosivo atinge algo, explode
     if proj.id.startswith("32") or proj.id.startswith("4"):
         del projectile_list[proj.id]
         createExplosion(proj.position, proj.radius, proj.damage)
         del proj
 
-    elif game_map[position[0]][position[1]].statswith("9"):
+    elif game_map[position[0]][position[1]].startswith("9"):
         if randint(1, 100) <= 35 and not proj.id in explosion_buffer: # 35% de chance do projetil não colidir c/ terreno
             return
         if proj.id in explosion_buffer:
@@ -147,14 +147,21 @@ def projectileCollision(proj, position):
         target_id = game_map[position[0]][position[1]]
         target = entity_list[target_id]
         if target.takeDamage(proj.damage) == 0: # se perdeu toda a vida
-            if target_id in Main.blu_team:
-                Main.blu_team.remove(target_id)
+            if target_id in blu_team:
+                blu_team.remove(target_id)
                 Main.red_points += target.id[:2]
+                print("BLU Morreu: "+target.id)
                 target.isKilled()
-            else:
-                Main.red_team.remove(target_id)
+                return ("b", blu_team)
+            elif target_id in red_team:
+                red_team.remove(target_id)
                 Main.blu_points += target.id[:2]
+                print("RED Morreu: "+target.id)
                 target.isKilled()
+                return ("r", red_team)
+            else:
+                print("Morreu: ", target.id)
+                print("Não estava em nenhuma equipe!")
 
 def loadMap(): # carrega todos os componentes do jogo no mapa
     for chave, item in entity_list.items():
@@ -193,9 +200,13 @@ def takeTurn(team):
             stateCalm(entity, team)
 
         elif entity.getState() == 1:
+            print("Ta na RED ?:", entity.id in Main.getRedTeam())
+            print("Alerta: ", entity.id, " ", entity.position)
             stateAlert(entity, team)
 
         else:
+            print("Ta na RED ?:", entity.id in Main.getRedTeam())
+            print("Combate: ", entity.id, " ", entity.position)
             stateCombat(entity, team)
 
 def stateCalm(entity, team): 
@@ -213,7 +224,7 @@ def stateCalm(entity, team):
 
     action = randint(1, 100)
 
-    if entity.id.startswith("14"):
+    if entity.id.startswith("14") and action <= 95:
         actionWait(entity)
 
     else:
@@ -221,10 +232,12 @@ def stateCalm(entity, team):
             actionWait(entity)
         
         else: # se não achar nada tenta se mover pro meio do mapa
-            pos = (50+randint(-25,25), 50+randint(-5,5))
+            if entity.id in move_buffer:
+                return
+            pos = (50+randint(-25,25), 50+randint(-25,25))
             i = 0
             while pos in occupied_spaces:
-                pos = (50+randint(-5-i,5+i), 50+randint(-5-i,5+i))
+                pos = (50+randint(-25-i,25+i), 50+randint(-25-i,25+i))
                 i += 1
             actionMove(entity, pos)
 
@@ -235,7 +248,7 @@ def stateAlert(entity, team, position = None):
         actionBroadcast(entity, team, 2)
         if entity.id in move_buffer:
             del move_buffer[entity.id]
-        del move_buffer[entity.id]
+        # del move_buffer[entity.id]
         stateCombat(entity, team)
 
     # se não há mais inimigos vistos, volta pro calmo
@@ -244,14 +257,15 @@ def stateAlert(entity, team, position = None):
         # actionBroadcast(entity, team, 1)
         if entity.id in move_buffer:
             del move_buffer[entity.id]
-        del move_buffer[entity.id]
+        # del move_buffer[entity.id]
         stateCalm(entity, team)
 
+    action = randint(1, 100)
     # se for uma MG, pode começar a atirar onde viu o inimigo
     if entity.id.startswith("12") and randint(1, 100) >= 50: # 50% de chance de atirar
         actionAttack(entity, position)
     
-    elif entity.id.startswith("14"):
+    elif entity.id.startswith("14")  and action <= 95:
         actionWait(entity)
 
     else:
@@ -261,17 +275,29 @@ def stateAlert(entity, team, position = None):
         if action <= 5 and not entity.id.startswith("13"): # 5% de chance de ficar parado
             actionWait(entity)
 
-        elif action > 5 and action <= 65 and not entity.id.startswith("13"): # 60% de chance de se mover pra trás de algum cover
-            position = findOnGameMap(entity.position, entity.vision_range, "9") # procura por um objeto do cenário
-            if position[1] >= 50: # muda o valor de y da posição pra não tentar calcular um path pra cima do objeto
-                position[1] += 1 # se está acima da metade (equipe vermelha, sobe)
-            else:
-                position[1] -= 1 # se não (equipe azul) desce
-            
-            actionMove(entity, position)
+        # elif action > 5 and action <= 65 and not entity.id.startswith("13"): # 60% de chance de se mover pra trás de algum cover
+        #     position = findOnGameMap(entity.position, entity.vision_range, "9") # procura por um objeto do cenário
+        #     if position != None:
+        #         if position[1] >= 50: # muda o valor de y da posição pra não tentar calcular um path pra cima do objeto
+        #             x = position[0]
+        #             new_y = position[1] + 1
+        #             position = (x, new_y) # # se está acima da metade (equipe vermelha, sobe)
+        #         else:
+        #             x = position[0]
+        #             new_y = position[1] - 1
+        #             position = (x, new_y) # # se não (equipe azul) desce
+                
+        #         actionMove(entity, position)
 
         else: # continua movendo pro meio
-            actionMove(entity, (50+randint(-5,5), 50+randint(-5,5)))
+            if entity.id in move_buffer:
+                return
+            pos = (50+randint(-25,25), 50+randint(-25,25))
+            i = 0
+            while pos in occupied_spaces:
+                pos = (50+randint(-25-i,25+i), 50+randint(-25-i,25+i))
+                i += 1
+            actionMove(entity, pos)
     
 def stateCombat(entity, team):
     # se não há mais inimigos no alcançe de ataque, volta pro alerta
@@ -280,21 +306,26 @@ def stateCombat(entity, team):
         # actionBroadcast(entity, team, 2)
         if entity.id in move_buffer:
             del move_buffer[entity.id]
-        del move_buffer[entity.id]
+        # del move_buffer[entity.id]
         stateAlert(entity, team)
 
     # se não for um tanque, escolhe entre mover pra cover ou atacar
 
-    if not entity.id.startswith("13"):
+    # if not entity.id.startswith("13"):
 
-        if randint(1, 100) <= 30 : # 30% de chance de se mover pra trás de algum cover
-            position = findOnGameMap(entity.position, entity.vision_range, "9") # procura por um objeto do cenário
-            if position[1] >= 50: # muda o valor de y da posição pra não tentar calcular um path pra cima do objeto
-                position[1] += 1 # se está acima da metade (equipe vermelha, sobe)
-            else:
-                position[1] -= 1 # se não (equipe azul) desce
-        actionMove(entity, position)
-        return
+    #     if randint(1, 100) <= 30 : # 30% de chance de se mover pra trás de algum cover
+    #         position = findOnGameMap(entity.position, entity.vision_range, "9") # procura por um objeto do cenário
+    #         if position != None:
+    #             if position[1] >= 50: # muda o valor de y da posição pra não tentar calcular um path pra cima do objeto
+    #                 x = position[0]
+    #                 new_y = position[1] + 1
+    #                 position = (x, new_y) # se está acima da metade (equipe vermelha, sobe)
+    #             else:
+    #                 x = position[0]
+    #                 new_y = position[1] - 1
+    #                 position = (x, new_y) # se não (equipe azul) desce
+    #             actionMove(entity, position)
+    #     return
 
     # se for artilharia, tem apenas uma chance de atacar
     if entity.id.startswith("14") and randint(1, 100) >= 10:

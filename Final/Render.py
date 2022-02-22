@@ -16,6 +16,7 @@ import Entities
 
 width, height = 1050, 700
 
+
 def refresh2d():
     glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
@@ -203,8 +204,6 @@ def draw(red_team, blu_team, red_points, blu_points):
     draw_rect(height,height,0,0,0,GL_POLYGON)
     glColor3f(0.0, 0.0, 1.0)
 
-    #draw_tank(100,100,"blue")
-    #draw_tank(800,600,"red")
 
     #draw_Text(800, 780, "Pontuação: ")
     #draw_Text(905, 780, "45")
@@ -218,18 +217,10 @@ def draw(red_team, blu_team, red_points, blu_points):
     #Logic.occupied_spaces x,y -> olhar no game_map -> ver o id e testar se ta no time vermelho ou azul
 
     for i, x in enumerate(Logic.occupied_spaces):
-        #print(x)
         coordx = Logic.occupied_spaces[i][0]
         coordy = Logic.occupied_spaces[i][1]
         id = Logic.game_map[coordx][coordy]
-        #print ("vermelho: ", red_points)
-        #print ("azul: ", blu_points)
-        #print(Main.getBluTeam())
-        #print(Main.getRedTeam())
-        #print (id, id in Main.red_team)
-        #print (id, id in Main.blu_team)
         if (str(id).startswith("11")):
-            #print(id in Main.red_team)
             if(id in red_team):
                 draw_soldado(coordx*(height/100),coordy*(height/100),"red","rf")
                 qtdred[0] += 1
@@ -292,7 +283,6 @@ def draw(red_team, blu_team, red_points, blu_points):
     draw_Text(height+200,20, str(qtdblu[2]))
     draw_Text(height,0, "ArtilleryTank: ")
     draw_Text(height+200,0, str(qtdblu[3]))
-
     glutSwapBuffers()
 
 

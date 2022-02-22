@@ -20,7 +20,13 @@ def getBluTeam():
     return blu_team
 def getRedTeam():
     return red_team
-  
+
+def changeBluTeam(new_blu):
+    blu_team = new_blu
+
+def changeRedTeam(new_red):
+    red_team = new_red
+
 def gameLoop():
     turn = 0
 
@@ -50,16 +56,29 @@ def gameLoop():
                 
                 Render.draw(red_team, blu_team, red_points, blu_points)
 
-        for proj, path in Logic.projectile_buffer:
+        for id, path in Logic.projectile_buffer.items():
+            proj = Logic.projectile_list[id]
             current_pos = proj.position
-            next_pos = path.popleft() # ultima posição do projétil
+            if len(path) == 0:
+                continue
+            next_pos = path.popleft() # proxima posição do projétil
 
             # Render.render_proj(proj, next_pos)
-
-            if current_pos in Logic.occupied_spaces:
-                Logic.projectileCollision(proj, current_pos)
-                # Render.render(game_map) # renderiza o mapa
-                del proj
+            if Logic.entity_list[proj.parent_id].position != current_pos:
+                if current_pos in Logic.occupied_spaces and Logic.game_map[current_pos[0]][current_pos[1]] != None:
+                    # print(current_pos)
+                    # print(Logic.occupied_spaces)
+                    # # print(Logic.game_map[current_pos[0]][current_pos[1]])
+                    # print(Logic.game_map[current_pos[0]][current_pos[1]])
+                    # input()
+                    ret = Logic.projectileCollision(proj, current_pos, blu_team, red_team)
+                    if ret[0] == "b":
+                        changeBluTeam(ret[1])
+                    else:
+                        changeRedTeam(ret[1])
+                    # Render.render(game_map) # renderiza o mapa
+                    del proj
+                    continue
 
             proj.position = new_pos
             proj.ttl -= randint(1,5)

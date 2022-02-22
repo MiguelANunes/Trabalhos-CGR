@@ -57,8 +57,17 @@ def rebuildPath(path, orig, dest):
     i, j = end
     final_path = [end]
 
+    if orig == end:
+        return final_path
+
     while path[i][j] != orig:
+        # print(i,j)
+        # print(path[i][j])
         final_path.append(path[i][j])
+        # if path[i][j] == None:
+            # print(orig)
+            # print(i, j)
+            # input()
         if path[i][j] != None:
             i, j = path[i][j]
     final_path.reverse()
@@ -335,7 +344,7 @@ class Soldier(Entity):
         self.life = 10
         self.armor = 0 
         self.ammo_type = 2
-        self.vision_range = 40 + randint(-15,15)
+        self.vision_range = 60 + randint(-5,15)
         self.size = (1,1)
 
 class Rifleman(Soldier):
@@ -347,7 +356,7 @@ class Rifleman(Soldier):
             self.id = "11"+str(randint(100, 999))
         self.ammo_amount = 8
         self.action_points = 3
-        self.attack_range = 30
+        self.attack_range = 50
         self.curret_state = 0
         Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
@@ -368,7 +377,7 @@ class Tank(Entity):
     def __init__(self, pos_x, pos_y):
         super().__init__(pos_x,pos_y)
         self.life = 100
-        self.vision_range = 60 + randint(-5,5)
+        self.vision_range = 80 + randint(-5,5)
 
 class MediumTank(Tank):
 
@@ -382,7 +391,7 @@ class MediumTank(Tank):
         self.ammo_type = 3
         self.current_ammo = 2
         self.action_points = 2
-        self.attack_range = 50
+        self.attack_range = 70
         self.size = (3,7)
         Logic.entity_list[self.id] = self # inserindo a entidade criada na lista de entidades existentes
 
@@ -432,6 +441,7 @@ class Projectile(object):
                     pair = (pair[0]+self.dispersion[1], pair[1])
                     path[i] = pair
         used_ids.append(self.id)
+        Logic.projectile_buffer[self.id] = self
         Logic.projectile_buffer[self.id] = deque(path)
 
     # def checkCollision(self, target):
