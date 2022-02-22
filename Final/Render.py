@@ -266,9 +266,11 @@ def draw(red_team, blu_team, red_points, blu_points):
             else:
                 draw_tank(coordx*(height/100),coordy*(height/100),"none", "at")
         elif (str(id).startswith("91")):
-            draw_rect(8,8,coordx*(height/100), coordy*(height/100),0,GL_POLYGON)
+            glColor3f(109/255, 110/255, 109/255)
+            draw_rect(height/100,height/100,coordx*(height/100), coordy*(height/100),0,GL_POLYGON)
         elif (str(id).startswith("92")):
-            draw_rect(8,8,coordx*(height/100), coordy*(height/100),0,GL_POLYGON)
+            glColor3f(109/255, 110/255, 109/255)
+            draw_rect(height/100,height/100,coordx*(height/100), coordy*(height/100),0,GL_POLYGON)
 
     #print("red: ", qtdred)
     #print("blu: ", qtdblu)
