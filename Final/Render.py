@@ -1,3 +1,4 @@
+from nis import match
 from time import sleep
 import numpy
 import math
@@ -9,7 +10,11 @@ from OpenGL.arrays import vbo
 import pygame                   #pip install pygame
 from pygame.locals import *
 
-width, height = 1000, 768
+import Logic
+import Main
+import Entities
+
+width, height = 1000, 800
 
 
 def refresh2d():
@@ -32,6 +37,36 @@ def draw_circle(tx, ty, cx, cy, tipoGL):
         glVertex2f(cx+x+tx, cy+y+ty)        
     glEnd()
 
+def draw_soldado(cx, cy, team, tipo):
+    tamx = 1
+    tamy = 1
+    if (tipo == "rf"):
+        if (team == "red"):
+            glColor3f(1,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+        if (team == "blue"):
+            glColor3f(0,0,1)
+            draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+        if (team == "none"):
+            glColor3f(109/255, 110/255, 109/255)
+            draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+    elif (tipo == "mg"):
+        if (team == "red"):
+            glColor3f(1,0,0)
+            draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(109/255, 110/255, 109/255)
+            draw_cano(15, 5, cx+tamx/2-5/2, cy+tamy/2, -90, GL_POLYGON)
+        if (team == "blue"):
+            glColor3f(0,0,1)
+            draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+            glColor3f(109/255, 110/255, 109/255)
+            draw_cano(15, 5, cx+tamx/2+5/2, cy+tamy/2, 90, GL_POLYGON)
+        if (team == "none"):
+            glColor3f(109/255, 110/255, 109/255)
+            draw_circle(tamx, tamy, cx, cy, GL_POLYGON)
+
+
+
 
 '''
   4____t3_____3
@@ -40,7 +75,6 @@ t4|           |t2
   |___________|  
   1    t1     2
 '''
-
 
 #If you want to rotate around P, translate by -P (so that P moves to the origin), then perform your rotation, then translate by P (so that the origin moves back to P).
 def rotaciona(meiox, meioy, rotacao):
@@ -109,8 +143,7 @@ def draw_Text(x, y, text):
     textSurface = font.render(text, True, (255, 255, 255, 255), (0, 66, 0, 255))
     textData = pygame.image.tostring(textSurface, "RGBA", True)
     glWindowPos2d(x, y)
-    glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
-    
+    glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)   
 
 def draw_tank(cx, cy, team):
     tamx = 40
@@ -121,53 +154,117 @@ def draw_tank(cx, cy, team):
         glColor3f(109/255, 110/255, 109/255)
         draw_cano(60, 10, cx+tamx/2-5, cy+tamy/2, -90, GL_POLYGON)
         draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
-    else:
+    elif(team == "blue"):
         glColor3f(0,0,1)
         draw_rect(tamx, tamy, cx, cy, 0, GL_POLYGON)
         glColor3f(109/255, 110/255, 109/255)
         draw_cano(60, 10, cx+tamx/2+5, cy+tamy/2, 90, GL_POLYGON)
         draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
-   
-    
+    elif(team == "none"):
+        glColor3f(109/255, 110/255, 109/255)
+        draw_rect(tamx, tamy, cx, cy, 0, GL_POLYGON)
+        glColor3f(109/255, 110/255, 109/255)
+        draw_cano(60, 10, cx+tamx/2+5, cy+tamy/2, 90, GL_POLYGON)
+        draw_circle(1,1,cx+tamx/2-1, cy+tamy/2,GL_POLYGON)
 
-
-def draw():
+def draw(red_team, blu_team):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
     refresh2d()
-    
-    #draw_circle( 5, 5, 100, 100, GL_POLYGON) # (tamanho x, tamanho y, coordenada x, coordenada y, tipo do objeto a ser desenhado)
-    #draw_rect( 80, 100, 300, 300, 0, GL_QUADS)
-    #draw_rect( 80, 100, 300, 300, 30, GL_QUADS) # (tamanho x, tamanho y, rotação, coordenada x, coordenada y, tipo do objeto)
-    #draw_rect( 80, 100, 500, 300, 0, GL_QUADS)
-    #draw_explosion(250, 250, 2)
+
     pygame.font.init()
     glColor3f(26/255, 82/255, 33/255)
-    draw_rect(1000,768,0,0,0,GL_POLYGON)
+    draw_rect(800,800,0,0,0,GL_POLYGON)
     glColor3f(0.0, 0.0, 1.0)
-    draw_tank(100,100,"blue")
 
-    draw_tank(800,600,"red")
+    #draw_tank(100,100,"blue")
+    #draw_tank(800,600,"red")
 
-    draw_Text(1, 748, "Pontuação: ")
-    draw_Text(105, 748, "45")
+    draw_Text(800, 780, "Pontuação: ")
+    draw_Text(905, 780, "45")
+    
+    #ocupado = [(10,10),(20,20),(30,30),(40,40)]
+    #Logic.occupied_spaces x,y -> olhar no game_map -> ver o id e testar se ta no time vermelho ou azul
+
+    for i, x in enumerate(Logic.occupied_spaces):
+        #print(x)
+        coordx = Logic.occupied_spaces[i][0]
+        coordy = Logic.occupied_spaces[i][1]
+        id = Logic.game_map[coordx][coordy]
+        print ("vermelho: ", Main.red_points)
+        print ("azul: ", Main.blu_points)
+        #print(Main.getBluTeam())
+        #print(Main.getRedTeam())
+        #print (id, id in Main.red_team)
+        #print (id, id in Main.blu_team)
+        if (str(id).startswith("11")):
+            #print(id in Main.red_team)
+            if(id in red_team):
+                draw_soldado(coordx*8,coordy*8,"red","rf")
+            elif(id in blu_team):
+                draw_soldado(coordx*8,coordy*8,"blue","rf")
+            else:
+                draw_soldado(coordx*8,coordy*8,"none","rf")
+        elif (str(id).startswith("12")):
+            if(id in red_team):
+                draw_soldado(coordx*8,coordy*8,"red","mg")
+            elif(id in blu_team):
+                draw_soldado(coordx*8,coordy*8,"blue","mg")
+            else:
+                draw_soldado(coordx*8,coordy*8,"none","mg")
+        elif (str(id).startswith("13")):
+            if(id in red_team):
+                draw_tank(coordx*8,coordy*8,"red")
+            elif(id in blu_team):
+                draw_tank(coordx*8,coordy*8,"blue")
+            else:
+                draw_tank(coordx*8,coordy*8,"none")
+        elif (str(id).startswith("14")):
+            if(id in red_team):
+                draw_tank(coordx*8,coordy*8,"red")
+            elif(id in blu_team):
+                draw_tank(coordx*8,coordy*8,"blue")
+            else:
+                draw_tank(coordx*8,coordy*8,"none")
+        elif (str(id).startswith("91")):
+            draw_rect(8,8,coordx*8, coordy*8,0,GL_POLYGON)
+        elif (str(id).startswith("92")):
+            draw_rect(8,8,coordx*8, coordy*8,0,GL_POLYGON)
+
+
 
     glutSwapBuffers()
 
+    '''
+        if (id in Main.red_team):
+            #glColor3f(1,0,0)
+            if (str(id).startswith("13")):
+                draw_tank(coordx*8,coordy*8,"red")
+            else:
+                draw_rect(5,5,coordx*8,coordy*8,0,GL_POLYGON)
+
+        elif (id in Main.blu_team):
+            glColor3f(0,0,1)
+            if (str(id).startswith("13")):
+                draw_tank(coordx*8,coordy*8,"blue")
+            else: 
+                draw_rect(5,5,coordx*8,coordy*8,0,GL_POLYGON)
+        else:
+            glColor3f(148/255, 148/255, 148/255)
+            draw_rect(5,5,coordx*8,coordy*8,0,GL_POLYGON)
+    '''
+
+
+
 def main():
+    Main.gameStart()
+    #Main.gameLoop()
     glutInit()
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH)
     glutInitWindowSize(width, height)
     glutInitWindowPosition(0, 0)
     glutCreateWindow("Trabalho Final de CGR")
     glutDisplayFunc(draw)
-    glMatrixMode(GL_PROJECTION)
-    gluPerspective(40, 1, 1, 40)
-    glMatrixMode(GL_MODELVIEW)
-    gluLookAt(0, 0, 10,
-              0, 0, 0,
-              0, 1, 0)
-    glPushMatrix()
     glutIdleFunc(draw)
     glutMainLoop()
 
